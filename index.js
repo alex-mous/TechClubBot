@@ -1,6 +1,7 @@
 const Discord = require("discord.js");
 const bot = new Discord.Client();
 const http = require("http");
+const fs = require("fs");
 
 const TOKEN = process.env.TOKEN || require("./TOKEN.json").token;
 bot.login(TOKEN);
@@ -30,10 +31,11 @@ bot.on("message", (msg) => {
     }
 })
 
+const index = fs.readFileSync("index.html");
 http.createServer((req, res) => {
-    res.writeHead(200, {"Content-Type": "application/json"});
+    res.writeHead(200, {"Content-Type": "text/html"});
     res.write(JSON.stringify({success: true}));
-    res.end();
+    res.end(index);
 }).listen(process.env.PORT || 3000);
 
 /**
@@ -73,8 +75,10 @@ let runCommand = (cmd, msg) => {
             break;
         case "help":
             msg.channel.send("Available commands:\n\
-            \t`help`\t\tDisplay this help\n\
-            \t`ban` @USER\t\tBan the user");
+  `help`        Display this help\n\
+  `ban` @USER   Ban the user\n\
+  `kick` @USER  Kick the user\n\
+  `deleteall`   Delete all messages on channel");
             break;
         default:
             msg.reply(`Unrecognized command: ${msg.content.toString()}`);
