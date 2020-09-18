@@ -173,22 +173,24 @@ WARNING :warning: anyone who sends more than 3 messages while in vote mode will 
         case "stop":
             break;
         case "results":
+            voteCommand("cancel", msg);
             break;
         case "status":
-            voteCommand("cancel", msg);
+            
             break;
         case "cancel":
             msg.channel.send("Exiting vote mode...");
             let memberRole = msg.guild.roles.cache.find((r) => { return r.name == "Member" });
             let mutedRole = msg.guild.roles.cache.find((r) => { return r.name == "Muted" });
             
-            for (let user of warnedUsers) {
+            for (let user in warnedUsers) {
                 console.log(user,warnedUsers[user]);
                 if (warnedUsers[user].muted) {
                     warnedUsers[user].user.roles.remove(memberRole);
                     warnedUsers[user].user.roles.add(mutedRole);
                 }
             }
+            mode = "regulars"
             break;
         case "help":
             msg.channel.send("Available voting commands:\n\
