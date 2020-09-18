@@ -43,41 +43,32 @@ http.createServer((req, res) => {
  * @param {*} msg 
  */
 let runCommand = (cmd, msg) => {
-    console.log(cmd);
+    console.log("Command requested: " + cmd);
     switch (cmd) {
         case "ban":
-            if (msg.mentions.users.size > 0) {
-                let banUser = msg.mentions.users.first();
-                msg.channel.send(`Three people must react with any emoji to this message to ban ${banUser.username}`);
-            } else {
-                msg.channel.send(`Please specify a user!`);
-            }
+            kickOrBan(msg, "ban");
             break;
         case "kick":
-                if (msg.mentions.users.size > 0) {
-                    console.log(msg.member.roles.cache.some((r) => {console.log(r);return ["Admin"].includes(r)}));
-                    /*if (msg.member.roles.find("name", "Admin")) {
-                        let kickUser = msg.mentions.users.first();
-                        console.log(kickUser.username);
-                        msg.channel.send(`${kickUser} is now kicked from the server!`);
-                        kickUser.kick();
-                    } else {
-                        msg.reply(`Sorry, you don't have permission to do that :smug:`);
-                    }*/
-                    msg.reply(`Sorry, you don't have permission to do that :angry:`);
-                } else {
-                    msg.reply(`Please specify a user!`);
-                }
-                break;
+            kickOrBan(msg, "ban");
+            break;
         case "hi":
             msg.channel.send(`Hello there, ${msg.author.username}!`);
             break;
         case "help":
             msg.channel.send("Available commands:\n\
-  `help`\t\t\t\t\t\tDisplay this help\n\
+  `hi`\t\t\t\t\t\t\t\tOi, which oik is calling me now?\n\
+  `say`\t\t\t\t\t\t\tSpeak up, little one. Did you hear me?!\n\
+  `help`\t\t\t\t\t\tHell hath no fury like an unspoken help\n\
+  \n\
+  **Moderators Only**\n\
   `ban @USER`\t\t\t\t\t\tBan the user\n\
   `kick @USER`\t\t\t\t\t\tKick the user\n\
-  `deleteall`\t\t\t\t\t\tDelete all messages on channel");
+  `deleteall`\t\t\t\t\t\tDelete all messages on channel\n\
+ ");
+            break;
+        case "deleteall":
+            deleteAll(msg);
+            msg.reply("Deleting messages...");
             break;
         default:
             msg.reply(`Unrecognized command: ${msg.content.toString()}`);
@@ -85,6 +76,43 @@ let runCommand = (cmd, msg) => {
 }
 
 
-let banUser = (user) => {
+let deleteAll = async (msg) => {
+    let msgs;
+    console.log(msg.channels);
+    let channel = msg.guild.channels.find((ch) => {console.log(ch); return ch.name == "general"}) //TODO change to get channel name
+    do {
+        msgs = await channel.fetchMessages({limit: 100});
+        msg.channel.bulkDelete(msgs)
+    } while (msgs.size >= 2);
+}
 
+/**
+ * Kick or ben the user from the server
+ * 
+ * @function kickOrBan
+ * @param {Object} msg Message sent
+ * @param {string} cmd Command (kick or ban)
+ */
+let kickOrBan = (msg, cmd) => {
+    const permissions = msg.member.roles.cache.some((r) => { return ["Admin"].includes(r.name) });
+    if (permissions) {
+        let usr = msg.mentions.members.first();
+        if (usr) {
+            if (cmd == "kick") {
+                msg.channel.send(`${usr} is now kicked from the server!`);
+                usr.kick();
+                return true;
+            } else {
+                msg.channel.send(`${usr} is now banned from the server!`);
+                usr.ban();
+                return true;
+            }
+        } else {
+            msg.reply(`No user specified`);
+            return false;
+        }
+    } else {
+        msg.reply(`No no no no no no no! Only admins can do that :angry:`);
+        return false;
+    }
 }
