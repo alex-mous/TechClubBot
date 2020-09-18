@@ -8,6 +8,10 @@ bot.login(TOKEN);
 
 const index = fs.readFileSync("index.html"); //Index file to serve
 
+let mode = "regular"; //The bot's current mode
+
+let warnedUsers = {}; //Users with warnings (in the format { username: attempts })
+
 /**
  * Event handler for startup of Bot
  */
@@ -20,13 +24,25 @@ bot.on('ready', () => {
  */
 bot.on("message", (msg) => {
     console.log(`Message received: ${msg.content.toString()} from ${msg.author.username}`);
-    let msgContentList = msg.content.toLowerCase().split(" ")
-    if (msg.content.startsWith("!")) {
-        runCommand(msg);
-    } else if ((msgContentList.includes("hello") || msgContentList.includes("hi") || msgContentList.includes("hey")) && msg.author.username !== "TechClubBot") {
-        sayHi(msg);
-    } else if ((msg.content.toLowerCase() == "lol" || msg.content.toLowerCase() == "xd") && msg.author.username !== "polarpiberry") {
-        msg.reply(`WARNING :warning: you will be banned if you continue behavior like this!`);
+    if (mode == "regular") { //Regular mode
+        let msgContentList = msg.content.toLowerCase().split(" ")
+        if (msg.content.startsWith("!")) {
+            runCommand(msg);
+        } else if ((msgContentList.includes("hello") || msgContentList.includes("hi") || msgContentList.includes("hey")) && msg.author.username !== "TechClubBot") {
+            sayHi(msg);
+        } else if ((msg.content.toLowerCase() == "lol" || msg.content.toLowerCase() == "xd") && msg.author.username !== "polarpiberry") {
+            msg.reply(`WARNING :warning: you will be banned if you continue behavior like this!`);
+        }
+    } else if (mode == "vote") { //Voting mode
+        if (msg.content.startsWith("!")) {
+            voteCommand(msg);
+        } else if (msg.author.username != "TechClubBot") {
+            if (!warnedUsers[msg.author.username]) {
+                msg.reply("please refrain from chatting during a vote. If you try 4 more times, you will be muted for the duration of the vote");
+            } else {
+
+            }
+        }
     }
 })
 
@@ -95,6 +111,7 @@ let runCommand = (msg) => {
                     deleteAll(msg);
                 }
             }
+            selfDestruct(i)
             break;
         case "vote":
             msg.channel.send("Creating a vote!\n\
