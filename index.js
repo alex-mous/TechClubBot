@@ -18,13 +18,14 @@ bot.on('ready', () => {
  */
 bot.on("message", (msg) => {
     console.log(`Message received: ${msg.content.toString()} from ${msg.author.username}`);
+    let msgContentList = msg.content.toLowerCase().split(" ")
     if (msg.content.startsWith("!")) {
         let command = msg.content.substring(msg.content.indexOf("!")+1);
         let end = command.indexOf(" ");
         end = end > 0 ? end : command.length;
         command = command.substring(0, end);
         runCommand(command, msg);
-    } else if ((msg.content.toLowerCase().includes("hello") || msg.content.toLowerCase().includes("hi") || msg.content.toLowerCase().includes("hey")) && msg.author.username !== "TechClubBot") {
+    } else if ((msgContentList.includes("hello") || msgContentList.includes("hi") || msgContentList.includes("hey")) && msg.author.username !== "TechClubBot") {
         msg.channel.send(`Hello, ${msg.author.username}!`);
     } else if ((msg.content.toLowerCase() == "lol" || msg.content.toLowerCase() == "xd") && msg.author.username !== "polarpiberry") {
         msg.reply(`WARNING :warning: You will be banned if you continue behavior like this!`);
@@ -52,16 +53,25 @@ let runCommand = (cmd, msg) => {
             kickOrBan(msg, "ban");
             break;
         case "hi":
-            msg.channel.send(`Hello there, ${msg.author.username}!`);
+            if (!msg.mentions.members.length == 0) {
+                msg.channel.send(`Hello there, General ${msg.author.username}!`);
+            } else {
+                msg.mentions.members.forEach((member) => {
+                    console.log(member);
+                    msg.channel.send(`Hello there, General ${member.user.username}!`);
+                })
+            }
             break;
         case "help":
             msg.channel.send("Available commands:\n\
   `hi`\t\t\t\t\t\t\t\tOi, which oik is calling me now?\n\
   `say`\t\t\t\t\t\t\tSpeak up, little one. Did you hear me?!\n\
+  `status`\t\t\t\t\t\t\tYou want to know my status? I'm truly honored\n\
   `help`\t\t\t\t\t\tHell hath no fury like an unspoken help\n\
   \n\
   **Moderators Only**\n\
   `ban @USER`\t\t\t\t\t\tBan the user\n\
+  `demote @USER`\t\t\t\t\t\t\tDemoted to a new lower rank!\n\
   `kick @USER`\t\t\t\t\t\tKick the user\n\
   `deleteall`\t\t\t\t\t\tDelete all messages on channel\n\
  ");
@@ -70,6 +80,12 @@ let runCommand = (cmd, msg) => {
             deleteAll(msg);
             msg.reply("Deleting messages...");
             break;
+        case "selfdestruct":
+            msg.channel.send(`WARNING :warning: Self-destructing in...!`);
+            for (let i=10; i>=0; i++) {
+                msg.channel.send(`${i}...`);
+            }
+            deleteAll(msg);
         default:
             msg.reply(`Unrecognized command: ${msg.content.toString()}`);
     }
