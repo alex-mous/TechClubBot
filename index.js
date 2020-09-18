@@ -34,7 +34,6 @@ bot.on("message", (msg) => {
 const index = fs.readFileSync("index.html");
 http.createServer((req, res) => {
     res.writeHead(200, {"Content-Type": "text/html"});
-    res.write(JSON.stringify({success: true}));
     res.end(index);
 }).listen(process.env.PORT || 3000);
 
@@ -56,7 +55,7 @@ let runCommand = (cmd, msg) => {
             break;
         case "kick":
                 if (msg.mentions.users.size > 0) {
-                    console.log(msg.member.roles.cache.some((r) => ["Admin"].includes(r)));
+                    console.log(msg.member.roles.cache.some((r) => {console.log(r);return ["Admin"].includes(r)}));
                     /*if (msg.member.roles.find("name", "Admin")) {
                         let kickUser = msg.mentions.users.first();
                         console.log(kickUser.username);
