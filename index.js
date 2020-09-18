@@ -56,7 +56,7 @@ let runCommand = (cmd, msg) => {
             break;
         case "kick":
                 if (msg.mentions.users.size > 0) {
-                    console.log(msg.member.roles);
+                    console.log(msg.member.roles.cache.some((r) => ["Admin"].includes(r)));
                     /*if (msg.member.roles.find("name", "Admin")) {
                         let kickUser = msg.mentions.users.first();
                         console.log(kickUser.username);
@@ -75,10 +75,10 @@ let runCommand = (cmd, msg) => {
             break;
         case "help":
             msg.channel.send("Available commands:\n\
-  `help`        Display this help\n\
-  `ban` @USER   Ban the user\n\
-  `kick` @USER  Kick the user\n\
-  `deleteall`   Delete all messages on channel");
+  `help`\t\t\t\t\t\tDisplay this help\n\
+  `ban @USER`\t\t\t\t\t\tBan the user\n\
+  `kick @USER`\t\t\t\t\t\tKick the user\n\
+  `deleteall`\t\t\t\t\t\tDelete all messages on channel");
             break;
         default:
             msg.reply(`Unrecognized command: ${msg.content.toString()}`);
