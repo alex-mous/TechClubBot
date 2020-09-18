@@ -100,10 +100,10 @@ let generalCommand = (cmd, msg) => {
             break;
         case "help":
             msg.channel.send("Available commands:\n\
-            `hi`\t\t\t\t\tOi, which oik is calling me now?\n\
-            `say`\t\t\t\t\tSpeak up, little one. Did you hear me?!\n\
-            `status`\t\t\t\t\tYou want to know my status? I'm truly honored\n\
-            `help`\t\t\t\t\tHell hath no fury like an unspoken help\n\n\
+            `hi`\t\t\t\t\tGreetings...\n\
+            `say`\t\t\t\t\tSpeak up, little one!\n\
+            `status`\t\t\t\t\tI'm honored\n\
+            `help`\t\t\t\t\tHelp me!\n\n\
             **Moderators Only**\n\
             `vote`\t\t\t\t\tCreate a vote/poll of the channel\n\
             `selfdestruct`\t\t\t\t\tSelf destruct the channel\n\
