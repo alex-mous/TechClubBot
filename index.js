@@ -41,7 +41,8 @@ bot.on("message", (msg) => {
             checkPermissions(msg, "Admin").then(() => {
                 let cmd = parseCommand(msg);
                 voteCommand(cmd, msg);
-            }).catch(() => {
+            }).catch((err) => {
+                console.error(err);
                 console.log("TechClubBot: someone tried to start a vote without permission");
             })
         } else if (msg.author.username != "TechClubBot") {
