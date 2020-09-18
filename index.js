@@ -1,5 +1,6 @@
 const Discord = require("discord.js");
 const bot = new Discord.Client();
+const http = require("http");
 
 const TOKEN = process.env.TOKEN;
 
@@ -23,6 +24,12 @@ bot.on("message", (msg) => {
         msg.reply(`WARNING :warning:! You will be perm-banned if you continue behavior like this!`);
     }
 })
+
+http.createServer((req, res) => {
+    res.writeHead(200, {"Content-Type": "application/json"});
+    res.write(JSON.stringify({success: true}));
+    res.end();
+}).listen(proccess.env.PORT | 3000);
 
 /**
  * Run the command and return
