@@ -11,7 +11,10 @@ const index = fs.readFileSync("index.html"); //Index file to serve
 let mode = "regular"; //The bot's current mode
 
 let warnedUsers = {}; //Users with warnings (in the format { username: attempts })
-let vote = {}; //Hold the current vote
+let vote = {
+    options: {},
+    voters: []
+}; //Hold the current vote
 
 
 /**
@@ -34,7 +37,7 @@ bot.on("message", (msg) => {
         } else if ((msgContentList.includes("hello") || msgContentList.includes("hi") || msgContentList.includes("hey")) && msg.author.username !== "TechClubBot") {
             sayHi(msg);
         } else if ((msg.content.toLowerCase() == "lol" || msg.content.toLowerCase() == "xd") && msg.author.username !== "polarpiberry") {
-            msg.reply(`WARNING :warning: you will be banned if you continue behavior like this!`);
+            msg.reply(`:warning: you will be banned if you continue behavior like this!`);
         }
     } else if (mode == "vote") { //Voting mode
         if (msg.content.startsWith("!")) {
@@ -42,14 +45,16 @@ bot.on("message", (msg) => {
                 let cmd = parseCommand(msg);
                 voteCommand(cmd, msg);
             }).catch((err) => {
-                console.error(err);
-                console.log("TechClubBot: someone tried to start a vote without permission");
+                msg.reply(`:no_entry: Only admins can do that`);
+                console.log("TechClubBot: someone tried to control a vote without permission");
             })
-        } else if (msg.author.username != "TechClubBot") {
+        }
+    }/*== else if (mode == "voting") { //Voting in progress
+        if (msg.author.username != "TechClubBot") {
             warnUser(msg);
         }
-    }
-})
+    } //Redundant */
+});
 
 /**
  * Welcome handler for new users, and assigns Member role
@@ -104,7 +109,7 @@ let generalCommand = (cmd, msg) => {
             break;
         case "help":
             msg.channel.send("Available commands:\n\
-            `hi`\t\t\t\t\tGreetings...\n\
+            `hi`\t\t\t\t\tGreetings from the bot\n\
             `say`\t\t\t\t\tSpeak up, little one!\n\
             `status`\t\t\t\t\tI'm honored\n\
             `help`\t\t\t\t\tHelp me!\n\n\
@@ -119,7 +124,7 @@ let generalCommand = (cmd, msg) => {
             deleteAll(msg);
             break;
         case "selfdestruct":
-            msg.channel.send(`WARNING :warning: Self-destructing in...!`);
+            msg.channel.send(`:warning: Self-destructing in...!`);
             let selfDestruct = (i) => {
                 if (i>=0) {
                     msg.channel.send(`${i}...`);
@@ -132,18 +137,22 @@ let generalCommand = (cmd, msg) => {
             break;
         case "vote":
             checkPermissions(msg, "Admin").then(() => {
-                msg.channel.send("Welcome to Voting Mode!");
+                msg.channel.send("**Welcome to Voting Mode!**\n\
+:warning: **Once the vote starts, you will have 60 seconds to cast your vote**\n\
+:warning: **To vote, react with an emoji to one of the options**\n\
+:warning: **Only your first reaction will be counted, so choose wisely**\n\
+*You will be muted once you have voted and will be unmuted again once the vote is complete*");
                 voteCommand("help", msg);
                 mode = "vote";
                 console.log("TechClubRobot: vote started");
             }).catch(() => {
-                msg.reply(`Only admins can do that :angry:`);
+                msg.reply(`:no_entry: Only admins can do that`);
                 console.warn("TechClubBot: vote stopped: insufficient permissions");
             })
             break;
         default:
             console.warn("TechClubBot: command not found");
-            msg.reply("That's not implemented yet! Please go add it at https://github.com/polarpiberry/TechClubBot");
+            msg.reply(":grey_question: That's not implemented yet! Please go add it at https://github.com/polarpiberry/TechClubBot");
     }
 }
 
@@ -158,46 +167,16 @@ let voteCommand = (cmd, msg) => {
     console.log("TechClubBot: running vote command " + cmd);
     switch (cmd) {
         case "start":
-            try {
-                let options = msg.content.substring(msg.content.indexOf(" ")).split("~");
-                if (options.length > 1) {
-                    msg.channel.send("@everyone Starting vote...\n\
-WARNING :warning: anyone who sends more than 3 messages while in vote mode will be muted until the vote is over!");
-                } else {
-                    msg.channel.send("Incorrectly formatted query. Must be in the form `!vote OPTION 1 ~ OPTION 2 ~ OPTION N`");
-                }
-            } catch {
-                msg.channel.send("Incorrectly formatted query. Must be in the form `!vote OPTION 1 ~ OPTION 2 ~ OPTION N`");
-            }
-            break;
-        case "stop":
-            break;
-        case "results":
-            voteCommand("cancel", msg);
-            break;
-        case "status":
-            
+            runVote(msg);
             break;
         case "cancel":
-            msg.channel.send("Exiting vote mode...");
-            let memberRole = msg.guild.roles.cache.find((r) => { return r.name == "Member" });
-            let mutedRole = msg.guild.roles.cache.find((r) => { return r.name == "Muted" });
-            
-            for (let user in warnedUsers) {
-                console.log(user,warnedUsers[user]);
-                if (warnedUsers[user].muted) {
-                    warnedUsers[user].user.roles.remove(memberRole);
-                    warnedUsers[user].user.roles.add(mutedRole);
-                }
-            }
-            mode = "regulars"
+            mode = "regular";
+            console.log("TechClubBot: voting mode cancelled");
+            msg.channel.send("Vote mode cancelled");
             break;
         case "help":
             msg.channel.send("Available voting commands:\n\
-            `start Option 1 ~ Option 2 ~ ... ~ Option N`                Start the vote with the various options\n\
-            `stop`              End the vote\n\
-            `status`            Progress of the vote\n\
-            `results`           (After !stop) Results of vote\n\
+            `start Option 1|Option 2|...|Option N`                Start the vote with the various options\n\
             `cancel`            Exit vote mode\n\
             `help`              Print this help");
             break;
@@ -224,7 +203,7 @@ let parseCommand = (msg) => {
     let end = command.indexOf(" ");
     end = end > 0 ? end : command.length;
     command = command.substring(0, end);
-    return command;
+    return command.toLowerCase();
 }
 
 /**
@@ -243,7 +222,7 @@ let warnUser = (msg) => {
         }
         if (i > 1) {
             warnedUsers[msg.author.username] = { left: i-1 };
-            msg.reply(`please refrain from texting during a vote. If you try ${i-1} more times, you will be muted for the duration of the vote`);
+            msg.reply(`:warning: please refrain from texting during a vote. If you try ${i-1} more times, you will be muted for the duration of the vote`);
             console.log(`TechClubRobot: cautioned user ${msg.author.username} with attempts left: ${i-1}`);
         } else {
             let memberRole = msg.guild.roles.cache.find((r) => { return r.name == "Member" });
@@ -251,12 +230,69 @@ let warnUser = (msg) => {
             msg.member.roles.remove(memberRole);
             msg.member.roles.add(mutedRole);
             warnedUsers[msg.author.username] = { muted: true, user: msg.member };
-            msg.channel.send(`${msg.author.username} has been muted for texting too much during a vote`);
             console.log(`TechClubRobot: muted user ${msg.author.username}`);
+            msg.channel.send(`:x: ${msg.author.username} has been muted for texting too much during a vote`);
         }
     })
 }
 
+/**
+ * Run a vote
+ * 
+ * @function runVote
+ * @param {Object} msg Message object to run vote off of (!start command)
+ */
+let runVote = (msg) => {
+    try {
+        let options = msg.content.substring(msg.content.indexOf(" ")+1).split("|");
+        if (options.length > 1) {
+            msg.channel.send("@everyone Starting vote...\nPlace your votes below:\n  ");
+            msg.channel.updateOverwrite(msg.channel.guild.roles.everyone, { SEND_MESSAGES: false }); //Prevent sending of messages
+            const filter = (_, usr) => { return !vote.voters[usr.username]; }; //Filter to only those who haven't yet voted
+            options.forEach((opt, i) => { //Initialize the votes
+                vote.options[opt] = 0;
+                msg.channel.send(`**${opt}**\n `).then((tempMsg) => {
+                    let collector = tempMsg.createReactionCollector(filter, { time: 60000 });
+                    collector.on("collect", (_, usr) => { //Collect votes
+                        console.log(`Collected a reaction from ${usr.tag}`);
+                        vote.voters[usr.username] = true;
+                        vote.options[opt] += 1;
+                    });
+                });
+            });
+            setTimeout(() => { //Wait until end of vote and print out results
+                msg.channel.updateOverwrite(msg.channel.guild.roles.everyone, { SEND_MESSAGES: true });
+                msg.channel.send(`:warning: **Vote Closed** - Results`);
+                let winner = "";
+                for (let opt in vote.options) {
+                    if (winner && vote.options[opt] > vote.options[winner]) {
+                        winner = opt;
+                    } else if (winner && vote.options[opt] == vote.options[winner]) {
+                        winner = "tied";
+                    } else if (!winner) {
+                        winner = opt;
+                    }
+                    msg.channel.send(`\n**${opt}** received ${vote.options[opt]} votes`);
+                }
+                msg.channel.send(`:checkered_flag: The winner is **${winner}**`); //print winner and check for ties
+                msg.channel.send("*Exited Voting Mode...*");
+                let memberRole = msg.guild.roles.cache.find((r) => { return r.name == "Member" });
+                let mutedRole = msg.guild.roles.cache.find((r) => { return r.name == "Muted" });
+                for (let user in warnedUsers) {
+                    if (warnedUsers[user].muted) {
+                        msg.member.roles.add(memberRole);
+                        msg.member.roles.remove(mutedRole);
+                    }
+                }
+                mode = "regular";
+            }, 61000);
+        } else {
+            msg.channel.send("Incorrectly formatted query. Must be in the form `!vote OPTION 1|OPTION 2|OPTION N`");
+        }
+    } catch {
+        msg.channel.send("Incorrectly formatted query. Must be in the form `!vote OPTION 1 ~ OPTION 2 ~ OPTION N`");
+    }
+}
 
 /**
  * Delete all messages in this messages channel
@@ -275,7 +311,7 @@ let deleteAll = (msg) => {
             } while (msgs.size >= 2);
         })();
     }).catch(() => {
-        msg.reply(`Only admins can do that :angry:`);
+        msg.reply(`:no_entry: Only admins can do that`);
         console.log("TechClubBot: insufficient user permissions to delete messages");
     })
 }
@@ -308,7 +344,7 @@ let kickOrBan = (msg, cmd) => {
             return false;
         }
     }).catch(() => {
-        msg.reply(`Only admins can do that :angry:`);
+        msg.reply(`:no_entry: Only admins can do that`);
         console.log("TechClubBot: insufficient user permissions")
     });
 }
@@ -339,10 +375,10 @@ let checkPermissions = (msg, requiredRole) => {
  */
 let sayHi = (msg) => {
     if (msg.mentions.members.size == 0) {
-        msg.channel.send(`Hello there, General ${msg.author.username}!`);
+        msg.channel.send(`:hand_splayed: Hello, ${msg.author.username}!`);
     } else {
         msg.mentions.members.forEach((member) => {
-            msg.channel.send(`Hello there, General ${member.user.username}!`);
+            msg.channel.send(`:hand_splayed: Hello there, General ${member.user.username}!`);
         })
     }
 }
@@ -354,6 +390,6 @@ let sayHi = (msg) => {
  * @param {Object} msg Message object
  */
 let say = (msg) => {
-    bot.emit("guildMemberAdd", msg.member);
     msg.channel.send(`@${msg.author.username} says${msg.content.substring(msg.content.indexOf(" "))}`);
+    msg.delete();
 }
