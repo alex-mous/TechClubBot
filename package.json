@@ -11,7 +11,6 @@
   "dependencies": {
     "dblapi.js": "^2.4.1",
     "discord": "^0.8.2",
-    "discord.js": "^12.3.1",
-    "dotenv": "^8.2.0"
+    "discord.js": "^12.3.1"
   }
 }

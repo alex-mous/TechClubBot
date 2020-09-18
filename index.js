@@ -2,8 +2,7 @@ const Discord = require("discord.js");
 const bot = new Discord.Client();
 const http = require("http");
 
-const TOKEN = process.env.TOKEN;
-
+const TOKEN = process.env.TOKEN || require("./TOKEN.json").token;
 bot.login(TOKEN);
 
 bot.on('ready', () => {
@@ -29,7 +28,7 @@ http.createServer((req, res) => {
     res.writeHead(200, {"Content-Type": "application/json"});
     res.write(JSON.stringify({success: true}));
     res.end();
-}).listen(proccess.env.PORT | 3000);
+}).listen(process.env.PORT || 3000);
 
 /**
  * Run the command and return
