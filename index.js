@@ -1,16 +1,21 @@
-const config = require("dotenv");
 const Discord = require("discord.js");
 const bot = new Discord.Client();
+const http = require("http");
+const fs = require("fs");
 
-config.config();
-const TOKEN = process.env.TOKEN;
-
+const TOKEN = process.env.TOKEN || require("./TOKEN.json").token;
 bot.login(TOKEN);
 
+/**
+ * Event handler for startup of Bot
+ */
 bot.on('ready', () => {
     console.log("Ready");
 });
 
+/**
+ * Event handler for message posted in channel
+ */
 bot.on("message", (msg) => {
     console.log(`Message received: ${msg.content.toString()} from ${msg.author.username}`);
     if (msg.content.startsWith("!")) {
@@ -22,9 +27,16 @@ bot.on("message", (msg) => {
     } else if ((msg.content.toLowerCase().includes("hello") || msg.content.toLowerCase().includes("hi") || msg.content.toLowerCase().includes("hey")) && msg.author.username !== "TechClubBot") {
         msg.channel.send(`Hello, ${msg.author.username}!`);
     } else if ((msg.content.toLowerCase() == "lol" || msg.content.toLowerCase() == "xd") && msg.author.username !== "polarpiberry") {
-        msg.reply(`WARNING :warning:! You will be perm-banned if you continue behavior like this!`);
+        msg.reply(`WARNING :warning: You will be banned if you continue behavior like this!`);
     }
 })
+
+const index = fs.readFileSync("index.html");
+http.createServer((req, res) => {
+    res.writeHead(200, {"Content-Type": "text/html"});
+    res.write(JSON.stringify({success: true}));
+    res.end(index);
+}).listen(process.env.PORT || 3000);
 
 /**
  * Run the command and return
@@ -60,6 +72,13 @@ let runCommand = (cmd, msg) => {
                 break;
         case "hi":
             msg.channel.send(`Hello there, ${msg.author.username}!`);
+            break;
+        case "help":
+            msg.channel.send("Available commands:\n\
+  `help`        Display this help\n\
+  `ban` @USER   Ban the user\n\
+  `kick` @USER  Kick the user\n\
+  `deleteall`   Delete all messages on channel");
             break;
         default:
             msg.reply(`Unrecognized command: ${msg.content.toString()}`);
