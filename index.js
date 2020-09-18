@@ -5,10 +5,16 @@ const http = require("http");
 const TOKEN = process.env.TOKEN || require("./TOKEN.json").token;
 bot.login(TOKEN);
 
+/**
+ * Event handler for startup of Bot
+ */
 bot.on('ready', () => {
     console.log("Ready");
 });
 
+/**
+ * Event handler for message posted in channel
+ */
 bot.on("message", (msg) => {
     console.log(`Message received: ${msg.content.toString()} from ${msg.author.username}`);
     if (msg.content.startsWith("!")) {
@@ -20,7 +26,7 @@ bot.on("message", (msg) => {
     } else if ((msg.content.toLowerCase().includes("hello") || msg.content.toLowerCase().includes("hi") || msg.content.toLowerCase().includes("hey")) && msg.author.username !== "TechClubBot") {
         msg.channel.send(`Hello, ${msg.author.username}!`);
     } else if ((msg.content.toLowerCase() == "lol" || msg.content.toLowerCase() == "xd") && msg.author.username !== "polarpiberry") {
-        msg.reply(`WARNING :warning:! You will be perm-banned if you continue behavior like this!`);
+        msg.reply(`WARNING :warning: You will be banned if you continue behavior like this!`);
     }
 })
 
@@ -64,6 +70,11 @@ let runCommand = (cmd, msg) => {
                 break;
         case "hi":
             msg.channel.send(`Hello there, ${msg.author.username}!`);
+            break;
+        case "help":
+            msg.channel.send("Available commands:\n\
+            \t`help`\t\tDisplay this help\n\
+            \t`ban` @USER\t\tBan the user");
             break;
         default:
             msg.reply(`Unrecognized command: ${msg.content.toString()}`);
