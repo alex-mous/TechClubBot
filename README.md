@@ -41,6 +41,8 @@ Access the follow bot help page with !help. All voting commands, as well as thos
 | `cancel`                                  | Cancel the vote before it starts                            |
 | `help`                                    | Show the help                                               |
 
+* * *
+
 ### License
 
 Copyright 2020 Alex Mous
