@@ -37,7 +37,8 @@ bot.on("message", (msg) => {
         } else if ((msgContentList.includes("hello") || msgContentList.includes("hi") || msgContentList.includes("hey")) && msg.author.username !== "TechClubBot") {
             sayHi(msg);
         } else if ((msg.content.toLowerCase() == "lol" || msg.content.toLowerCase() == "xd") && msg.author.username !== "polarpiberry") {
-            msg.reply(`:warning: you will be banned if you continue behavior like this!`);
+            msg.reply(`:warning: Please do not continue behavior like this`);
+            warnUser(msg, 10);
         }
     } else if (mode == "vote") { //Voting mode
         if (msg.content.startsWith("!")) {
@@ -49,11 +50,7 @@ bot.on("message", (msg) => {
                 console.log("TechClubBot: someone tried to control a vote without permission");
             })
         }
-    }/*== else if (mode == "voting") { //Voting in progress
-        if (msg.author.username != "TechClubBot") {
-            warnUser(msg);
-        }
-    } //Redundant */
+    }
 });
 
 /**
@@ -207,31 +204,28 @@ let parseCommand = (msg) => {
 }
 
 /**
- * Warn and mute the user (if 0 attempts left and not an admin)
+ * Warn and mute the user (if 0 attempts left and not an Admin)
  * 
  * @function warnUser
  * @param {Object} msg Message object
+ * @param {number} maxNo Maximum number of attempts
  */
-let warnUser = (msg) => {
+let warnUser = (msg, maxNo) => {
     checkPermissions(msg, "Admin").then(() => { //Only caution non-admins
         console.log("TechClubBot: extra message from admin");
     }).catch(() => {
-        let i = 3;
+        let i = maxNo;
         if (warnedUsers[msg.author.username]) {
             i = warnedUsers[msg.author.username].left;
         }
         if (i > 1) {
             warnedUsers[msg.author.username] = { left: i-1 };
-            msg.reply(`:warning: please refrain from texting during a vote. If you try ${i-1} more times, you will be muted for the duration of the vote`);
+            msg.reply(`:warning: If you try ${i-1} more times, you will be kicked from the server`);
             console.log(`TechClubRobot: cautioned user ${msg.author.username} with attempts left: ${i-1}`);
         } else {
-            let memberRole = msg.guild.roles.cache.find((r) => { return r.name == "Member" });
-            let mutedRole = msg.guild.roles.cache.find((r) => { return r.name == "Muted" });
-            msg.member.roles.remove(memberRole);
-            msg.member.roles.add(mutedRole);
-            warnedUsers[msg.author.username] = { muted: true, user: msg.member };
-            console.log(`TechClubRobot: muted user ${msg.author.username}`);
-            msg.channel.send(`:x: ${msg.author.username} has been muted for texting too much during a vote`);
+            msg.member.kick();
+            console.log(`TechClubRobot: kicked user ${msg.author.username}`);
+            msg.channel.send(`:x: ${msg.author.username} has been kicked for texting too much during a vote`);
         }
     })
 }
