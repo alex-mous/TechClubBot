@@ -1,6 +1,5 @@
 # TechClubBot
-## Bellevue College Tech Club Discord Bot!
-=============================
+## Bellevue College Tech Club Discord Bot
 
 ### Introduction
 
