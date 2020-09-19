@@ -108,9 +108,9 @@ let generalCommand = (cmd, msg) => {
             msg.channel.send("Available commands:\n\
             `hi`\t\t\t\t\tGreetings from the bot\n\
             `say`\t\t\t\t\tSpeak up, little one!\n\
-            `status`\t\t\t\t\tI'm honored\n\
+            `status`\t\t\t\t\tMy status\n\
             `help`\t\t\t\t\tHelp me!\n\n\
-            **Moderators Only**\n\
+            **Admins Only**\n\
             `vote`\t\t\t\t\tCreate a vote/poll of the channel\n\
             `selfdestruct`\t\t\t\t\tSelf destruct the channel\n\
             `ban @USER`\t\t\t\t\tBan the user\n\

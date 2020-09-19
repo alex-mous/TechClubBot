@@ -4,13 +4,13 @@
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
     </head>
     <body>
-        <div class="containter">
-            <h1 class="text-center">Welcome to the Tech Club Bot!</h1>
+        <div class="container">
+            <h1 class="text-center my-3">Welcome to the Tech Club Bot!</h1>
             <h3 class="text-center">
                 Introduction
             </h3>
             <p>
-                This is the webserver for the Bellevue College Tech Club Discord Bot. Join the bot development server here: <a href="https://discord.gg/cF7R349">https://discord.gg/cF7R349</a>! And view the Bot's GitHub page here: <a href="https://github.com/polarpiberry/TechClubBot">https://github.com/polarpiberry/TechClubBot</a>
+                This is the webserver for the Bellevue College Tech Club Discord Bot. Join the bot development server here: <a href="https://discord.gg/cF7R349">https://discord.gg/cF7R349</a> and see the Bot's GitHub page here: <a href="https://github.com/polarpiberry/TechClubBot">https://github.com/polarpiberry/TechClubBot</a>
             </p>
             <hr>
             <h3 class="text-center">
@@ -21,11 +21,166 @@
             </p>
             <hr>
             <h3 class="text-center">
-                Installation
+                Usage
             </h3>
             <p>
-                To add the Bot to your Discord server, please contact me through the GitHub page for the OAuth access.
+                Access the follow bot help page with !help. All voting commands, as well as those under the Admin Only heading require the "Admin" role.
+                <h4 class="text-center">General Command</h4>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>
+                                Command
+                            </th>
+                            <th>
+                                Description
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <code>
+                                    hi
+                                </code>
+                            </td>
+                            <td>
+                                Greetings from the bot
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <code>
+                                    say
+                                </code>
+                            </td>
+                            <td>
+                                Speak up, little one!
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <code>
+                                    status
+                                </code>
+                            </td>
+                            <td>
+                                My status
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <code>
+                                    help
+                                </code>
+                            </td>
+                            <td>
+                                Show the help
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" class="text-center text-muted">
+                                Admins Only
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <code>
+                                    vote
+                                </code>
+                            </td>
+                            <td>
+                                Create a vote/poll of the channel (enter Voting Mode)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <code>
+                                    selfdestruct
+                                </code>
+                            </td>
+                            <td>
+                                Self destruct the channel
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <code>
+                                    ban @USER
+                                </code>
+                            </td>
+                            <td>
+                                Ban @USER
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <code>
+                                    deleteall
+                                </code>
+                            </td>
+                            <td>
+                                Delete all messages in channel
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <h4 class="text-center">Voting Mode Commands</h4>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>
+                                Command
+                            </th>
+                            <th>
+                                Description
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="2" class="text-center text-muted">
+                                Admins Only
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <code>
+                                    start Option 1|Option 2|...|Option N
+                                </code>
+                            </td>
+                            <td>
+                                Start the vote with the various options
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <code>
+                                    cancel
+                                </code>
+                            </td>
+                            <td>
+                                Cancel the vote before it starts
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <code>
+                                    help
+                                </code>
+                            </td>
+                            <td>
+                                Show the help
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </p>
+            <footer class="text-muted text-center">
+                <hr>
+                Copyright (c) 2020 Alex Mous. Code released under the <a href="https://opensource.org/licenses/MIT">MIT license</a>
+                <hr>
+            </footer>
         </div>
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
