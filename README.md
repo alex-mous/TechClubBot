@@ -1,10 +1,15 @@
 # TechClubBot
-## Bellevue College Tech Club Discord Bot!
-=============================
+## Bellevue College Tech Club Discord Bot
 
 ### Introduction
 
 This is the Discord bot for the Bellevue College Tech Club. Join the bot development server here: [https://discord.gg/cF7R349](https://discord.gg/cF7R349) and see the Bot's webpage here: [http://techclubbot.herokuapp.com/](http://techclubbot.herokuapp.com/)
+
+* * *
+
+### Potential Improvements
+
+Add `calendar` function for meeting calendar, `remindme` for meeting reminders, and Admin-only commands to schedule meetings (such as `addmeeting`, `removemeeting`, `modifymeeting`, with automatic notifications to the `remindme` users and notifications in #general when meetings are close)
 
 * * *
 
@@ -41,6 +46,8 @@ Access the follow bot help page with !help. All voting commands, as well as thos
 | `start Option 1\|Option 2\|...\|Option N` | Start the vote with the various options                     |
 | `cancel`                                  | Cancel the vote before it starts                            |
 | `help`                                    | Show the help                                               |
+
+* * *
 
 ### License
 
