@@ -42,7 +42,7 @@ bot.on("message", (msg) => {
         }
     } else if (mode == "vote") { //Voting mode
         if (msg.content.startsWith("!")) {
-            checkPermissions(msg, "Admin").then(() => {
+            checkPermissions(msg, "Leadership").then(() => {
                 let cmd = parseCommand(msg);
                 voteCommand(cmd, msg);
             }).catch((err) => {
@@ -58,9 +58,9 @@ bot.on("message", (msg) => {
  */
 bot.on("guildMemberAdd", (member) => {
     console.log("TechClubBot: new user added!");
-    let memberRole = member.guild.roles.cache.find((r) => { return r.name == "Member" });
+    //let memberRole = member.guild.roles.cache.find((r) => { return r.name == "Member" });
     member.guild.channels.cache.find((ch) => { return ch.name == "welcome"}).send(`Welcome to the server, ${member.user.username}!`);
-    member.roles.add(memberRole); //Add the member role
+    //member.roles.add(memberRole); //Add the member role
 });
 
 bot.on("error", (e) => console.error(e));
@@ -110,7 +110,7 @@ let generalCommand = (cmd, msg) => {
             `say`\t\t\t\t\tSpeak up, little one!\n\
             `status`\t\t\t\t\tMy status\n\
             `help`\t\t\t\t\tHelp me!\n\n\
-            **Admins Only**\n\
+            **Leadership Only**\n\
             `vote`\t\t\t\t\tCreate a vote/poll of the channel\n\
             `selfdestruct`\t\t\t\t\tSelf destruct the channel\n\
             `ban @USER`\t\t\t\t\tBan the user\n\
@@ -211,7 +211,7 @@ let parseCommand = (msg) => {
  * @param {number} maxNo Maximum number of attempts
  */
 let warnUser = (msg, maxNo) => {
-    checkPermissions(msg, "Admin").then(() => { //Only caution non-admins
+    checkPermissions(msg, "Leadership").then(() => { //Only caution non-admins
         console.log("TechClubBot: extra message from admin");
     }).catch(() => {
         let i = maxNo;
@@ -295,7 +295,7 @@ let runVote = (msg) => {
  * @param {Object} msg Message object
  */
 let deleteAll = (msg) => {
-    checkPermissions(msg, "Admin").then(() =>  {
+    checkPermissions(msg, "Leadership").then(() =>  {
         console.log("TechClubBot: deleting all messages...");
         (async () => {
             let msgs;
@@ -318,7 +318,7 @@ let deleteAll = (msg) => {
  * @param {string} cmd Command (kick or ban)
  */
 let kickOrBan = (msg, cmd) => {
-    checkPermissions(msg, "Admin").then(() => {
+    checkPermissions(msg, "Leadership").then(() => {
         let usr = msg.mentions.members.first();
         console.log("TechClubBot: " + cmd + " requested for " + usr.username);
         if (usr && usr.username != "TechClubBot") {
