@@ -7,6 +7,12 @@ This is the Discord bot for the Bellevue College Tech Club. Join the bot develop
 
 * * *
 
+### Potential Improvements
+
+Add `calendar` function for meeting calendar, `remindme` for meeting reminders, and Admin-only commands to schedule meetings (such as `addmeeting`, `removemeeting`, `modifymeeting`, with automatic notifications to the `remindme` users and notifications in #general when meetings are close)
+
+* * *
+
 ### Installation
 
 To add the Bot to your own Discord server, please contact mee for the OAuth access.
@@ -40,6 +46,8 @@ Access the follow bot help page with !help. All voting commands, as well as thos
 | `start Option 1\|Option 2\|...\|Option N` | Start the vote with the various options                     |
 | `cancel`                                  | Cancel the vote before it starts                            |
 | `help`                                    | Show the help                                               |
+
+* * *
 
 ### License
 
