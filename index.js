@@ -34,9 +34,9 @@ bot.on("message", (msg) => {
         if (msg.content.startsWith("!")) {
             let cmd = parseCommand(msg);
             generalCommand(cmd, msg);
-        } else if ((msgContentList.includes("hello") || msgContentList.includes("hi") || msgContentList.includes("hey")) && msg.author.username !== "TechClubBot") {
+        } else if ((msgContentList.includes("hello") || msgContentList.includes("hi") || msgContentList.includes("hey")) && msg.author.username !== "TechClubBot" && msgContentList.length <= 5) { //Run the say hi function
             sayHi(msg);
-        } else if ((msg.content.toLowerCase() == "lol" || msg.content.toLowerCase() == "xd") && msg.author.username !== "polarpiberry") {
+        } else if ((msgContentList[0] == "lol" || msgContentList[0] == "xd") && msg.author.username !== "polarpiberry" && msgContentList.length <= 2) {
             msg.reply(`:warning: Please do not continue behavior like this`);
             warnUser(msg, 10);
         }
