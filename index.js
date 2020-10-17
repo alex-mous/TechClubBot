@@ -2,20 +2,33 @@ const Discord = require("discord.js");
 const bot = new Discord.Client();
 const http = require("http");
 const fs = require("fs");
+const sheets = require("simplegooglesheetsjs");
 
 const TOKEN = process.env.TOKEN || require("./TOKEN.json").token; //Bot login token
-bot.login(TOKEN);
+const GOOGLE_AUTH_EMAIL = process.env.GOOGLE_AUTH_EMAIL || require("./GOOGLE_AUTH.json").client_email; //Google Service Account credentials
+const GOOGLE_AUTH_KEY = process.env.GOOGLE_AUTH_KEY || require("./GOOGLE_AUTH.json").private_key; //Google Service Account credentials
+const GOOGLE_SHEET_ID = process.env.GOOGLE_SHEET_ID || require("./GOOGLE_SHEET_ID.json").id; //Google Sheet Email
+
+bot.login(TOKEN); //Set up the Discord Bot
+
+let minutes = new sheets(); //Set up the minutes
+let calendar = new sheets(); //Set up the calendar
+minutes.authorizeServiceAccount(GOOGLE_AUTH_EMAIL, GOOGLE_AUTH_KEY);
+minutes.setSpreadsheet(GOOGLE_SHEET_ID).then(() => minutes.setSheet("Minutes"));
+calendar.authorizeServiceAccount(GOOGLE_AUTH_EMAIL, GOOGLE_AUTH_KEY);
+calendar.setSpreadsheet(GOOGLE_SHEET_ID).then(() => calendar.setSheet("Calendar"));
+
 
 const index = fs.readFileSync("index.html"); //Index file to serve
 
 let mode = "regular"; //The bot's current mode
 
 let warnedUsers = {}; //Users with warnings (in the format { username: attempts })
-let vote = {
+
+let vote = { //Hold the current vote
     options: {},
     voters: []
-}; //Hold the current vote
-
+};
 
 /**
  * Event handler for startup of Bot
@@ -109,13 +122,15 @@ let generalCommand = (cmd, msg) => {
             `hi`\t\t\t\t\tGreetings from the bot\n\
             `say`\t\t\t\t\tSpeak up, little one!\n\
             `status`\t\t\t\t\tMy status\n\
-            `help`\t\t\t\t\tHelp me!\n\n\
+            `help`\t\t\t\t\tHelp me!\n\
+            `getminutes MEETING_#`\t\t\t\t\Get the meeting minutes (meeting # is the number of meeting prior to the last meeting [e.g. 1 => meeting before last meeting]. No number or 0 for previous meeting)\n\n\
             **Leadership Only**\n\
             `vote`\t\t\t\t\tCreate a vote/poll of the channel\n\
             `selfdestruct`\t\t\t\t\tSelf destruct the channel\n\
             `ban @USER`\t\t\t\t\tBan the user\n\
             `kick @USER`\t\t\t\t\tKick the user\n\
-            `deleteall`\t\t\t\t\tDelete all messages on this channel\n");
+            `deleteall`\t\t\t\t\tDelete all messages on this channel\n\
+            `setminutes DATE TYPE MINUTES`\t\t\t\t\tSet the meeting minutes");
             break;
         case "deleteall":
             deleteAll(msg);
@@ -133,7 +148,7 @@ let generalCommand = (cmd, msg) => {
             selfDestruct(10);
             break;
         case "vote":
-            checkPermissions(msg, "Admin").then(() => {
+            checkPermissions(msg, "Leadership").then(() => {
                 msg.channel.send("**Welcome to Voting Mode!**\n\
 :warning: **Once the vote starts, you will have 60 seconds to cast your vote**\n\
 :warning: **To vote, react with an emoji to one of the options**\n\
@@ -146,6 +161,17 @@ let generalCommand = (cmd, msg) => {
                 msg.reply(`:no_entry: Only admins can do that`);
                 console.warn("TechClubBot: vote stopped: insufficient permissions");
             })
+            break;
+        case "setminutes":
+            checkPermissions(msg, "Leadership").then(() => {
+                setMinutes(msg);
+            }).catch(() => {
+                msg.reply(`:no_entry: Only admins can do that`);
+                console.warn("TechClubBot: no minutes set: insufficient permissions");
+            });
+            break;
+        case "getminutes":
+            getMinutes(msg);
             break;
         default:
             console.warn("TechClubBot: command not found");
@@ -270,11 +296,9 @@ let runVote = (msg) => {
                 }
                 msg.channel.send(`:checkered_flag: The winner is **${winner}**`); //print winner and check for ties
                 msg.channel.send("*Exited Voting Mode...*");
-                let memberRole = msg.guild.roles.cache.find((r) => { return r.name == "Member" });
                 let mutedRole = msg.guild.roles.cache.find((r) => { return r.name == "Muted" });
                 for (let user in warnedUsers) {
                     if (warnedUsers[user].muted) {
-                        msg.member.roles.add(memberRole);
                         msg.member.roles.remove(mutedRole);
                     }
                 }
@@ -318,10 +342,18 @@ let deleteAll = (msg) => {
  * @param {string} cmd Command (kick or ban)
  */
 let kickOrBan = (msg, cmd) => {
+    if (!msg.mentions.members.first()) {
+        msg.reply(":warning: you need to specify at least one person to kick or ban");
+        return;
+    }
+    if (msg.mentions.members.first() && msg.mentions.members.first().roles.cache.some((r) => { return "Leadership" == r.name })) {
+        msg.reply("HA HA HA you can't ban a member of Leadership");
+        return;
+    }
     checkPermissions(msg, "Leadership").then(() => {
         let usr = msg.mentions.members.first();
-        console.log("TechClubBot: " + cmd + " requested for " + usr.username);
-        if (usr && usr.username != "TechClubBot") {
+        console.log("TechClubBot: " + cmd + " requested for ", usr);
+        if (usr && usr.user.username.toLowerCase() != "techclubbot") {
             if (cmd == "kick") {
                 msg.channel.send(`${usr} is now kicked from the server!`);
                 usr.kick();
@@ -331,13 +363,14 @@ let kickOrBan = (msg, cmd) => {
                 usr.ban();
                 return true;
             }
-        } else if (usr.username == "TechClubBot") {
+        } else if (usr.user.username.toLowerCase() == "techclubbot") {
             msg.reply("HA HA HA HA HA HA HA");
         } else {
             msg.reply("No user specified");
             return false;
         }
-    }).catch(() => {
+    }).catch((e) => {
+        console.log("Error: ", e)
         msg.reply(`:no_entry: Only admins can do that`);
         console.log("TechClubBot: insufficient user permissions")
     });
@@ -386,4 +419,52 @@ let sayHi = (msg) => {
 let say = (msg) => {
     msg.channel.send(`@${msg.author.username} says${msg.content.substring(msg.content.indexOf(" "))}`);
     msg.delete();
+}
+
+/**
+ * Set the meeting minutes for a meeting today
+ * 
+ * @function setMinutes
+ * @param {Object} msg Message of meeting minutes
+ */
+let setMinutes = (msg) => {
+    let content = msg.content.split(" ");
+    if (content.length < 4) {
+        msg.reply("Please specify a date, a meeting type, and the minutes");
+        return;
+    }
+    minutes.getRows(2,1000).then((r) => { //Search up to 999 meetings
+        minutes.setRow(r.length+2, {"Date": content[1], "Meeting Type": content[2], "Minutes":  content.slice(3).join(" ")}).then(() => {
+            console.log("Done!")
+        });
+    });
+}
+
+/**
+ * Get the meeting minutes for a meeting
+ * 
+ * @function getMinutes
+ * @param {Object} msg Message
+ */
+let getMinutes = (msg) => {
+    let content = msg.content.split(" ");
+    let num;
+    if (content.length < 2) {
+        num = 0;
+    } else {
+        num = parseInt(content[1]);
+        if (isNaN(num) || num < 0) {
+            msg.reply("Please specify a valid meeting number (positive integer)");
+            return;
+        }
+    }
+    minutes.getRows(2,1000).then((r) => { //Search up to 999 meetings
+        if (r.length <= num) {
+            msg.reply("There's no meeting that far back!");
+            return;
+        }
+        msg.channel.send("Meeting Date: " + r[r.length-num-1]["Date"]);
+        msg.channel.send("Meeting Type: " + r[r.length-num-1]["Meeting Type"]);
+        msg.channel.send("Meeting Minutes: " + r[r.length-num-1]["Minutes"]);
+    });
 }

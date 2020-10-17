@@ -31,12 +31,15 @@ Access the follow bot help page with !help. All voting commands, as well as thos
 | `say`          | Speak up, little one!                                       |
 | `status`       | My status                                                   |
 | `help`         | Show the help                                               |
+| `getminutes MEETING_#`    | Get the meeting minutes (meeting # is the number of meeting prior to the last meeting [e.g. 1 => meeting before last meeting]. No number or 0 for previous meeting) |
 | *Admins Only*  | Commands below can be run by users with the role Admin only |
 | `vote`         | Create a vote/poll of the channel (enter Voting Mode)       |
 | `selfdestruct` | Self destruct the channel                                   |
 | `ban @USER`    | Ban @USER                                                   |
 | `kick @USER`   | Kick @USER                                                  |
 | `deleteall`    | Delete all messages in channel                              |
+| `setminutes DATE TYPE MINUTES` | Set the meeting minutes                     |
+
 
 #### Voting Mode Commands
 

@@ -2,3 +2,5 @@
 node_modules
 package-lock.json
 TOKEN.json
+GOOGLE_AUTH.json
+GOOGLE_SHEET_ID.json
