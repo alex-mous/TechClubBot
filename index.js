@@ -3,6 +3,7 @@ const bot = new Discord.Client();
 const http = require("http");
 const fs = require("fs");
 const sheets = require("simplegooglesheetsjs");
+const { removeListener } = require("process");
 
 const TOKEN = process.env.TOKEN || require("./TOKEN.json").token; //Bot login token
 const GOOGLE_AUTH_EMAIL = process.env.GOOGLE_AUTH_EMAIL || require("./GOOGLE_AUTH.json").client_email; //Google Service Account credentials
@@ -123,14 +124,17 @@ let generalCommand = (cmd, msg) => {
             `say`\t\t\t\t\tSpeak up, little one!\n\
             `status`\t\t\t\t\tMy status\n\
             `help`\t\t\t\t\tHelp me!\n\
-            `getminutes MEETING_#`\t\t\t\t\Get the meeting minutes (meeting # is the number of meeting prior to the last meeting [e.g. 1 => meeting before last meeting]. No number or 0 for previous meeting)\n\n\
+            `getminutes MEETING_#`\t\t\t\t\tGet the meeting minutes (meeting # is the number of meeting prior to the last meeting [e.g. 1 => meeting before last meeting]. No number or 0 for previous meeting)\n\
+            `calendar`\t\t\t\t\tPrint out the meeting calendar and list\n\n\
             **Leadership Only**\n\
             `vote`\t\t\t\t\tCreate a vote/poll of the channel\n\
             `selfdestruct`\t\t\t\t\tSelf destruct the channel\n\
             `ban @USER`\t\t\t\t\tBan the user\n\
             `kick @USER`\t\t\t\t\tKick the user\n\
             `deleteall`\t\t\t\t\tDelete all messages on this channel\n\
-            `setminutes DATE TYPE MINUTES`\t\t\t\t\tSet the meeting minutes");
+            `setminutes DATE TYPE MINUTES`\t\t\t\t\tSet the meeting minutes\n\
+            `addmeeting DAY|MONTH|YEAR|TYPE|TIME_START|TIME_END`\t\t\t\t\tSchedule a meeting\n\
+            `removemeeting DAY|MONTH|YEAR|TYPE|TIME_START`\t\t\t\t\tUn-schedule a meeting\n");
             break;
         case "deleteall":
             deleteAll(msg);
@@ -172,6 +176,26 @@ let generalCommand = (cmd, msg) => {
             break;
         case "getminutes":
             getMinutes(msg);
+            break;
+        case "addmeeting":
+            checkPermissions(msg, "Leadership").then(() => {
+                addMeeting(msg); //To schedule a meeting
+            }).catch((e) => {
+                console.log(e)
+                msg.reply(`:no_entry: Only admins can do that`);
+                console.warn("TechClubBot: no meeting added: insufficient permissions");
+            });
+            break;
+        case "removemeeting":
+            checkPermissions(msg, "Leadership").then(() => {
+                removeMeeting(msg); //To unschedule a meeting
+            }).catch(() => {
+                msg.reply(`:no_entry: Only admins can do that`);
+                console.warn("TechClubBot: no meeting removed: insufficient permissions");
+            });
+            break;
+        case "calendar":
+            showMeetingCalendar(msg);
             break;
         default:
             console.warn("TechClubBot: command not found");
@@ -433,9 +457,12 @@ let setMinutes = (msg) => {
         msg.reply("Please specify a date, a meeting type, and the minutes");
         return;
     }
-    minutes.getRows(2,1000).then((r) => { //Search up to 999 meetings
-        minutes.setRow(r.length+2, {"Date": content[1], "Meeting Type": content[2], "Minutes":  content.slice(3).join(" ")}).then(() => {
-            console.log("Done!")
+    minutes.getLastRowIndex().then((lastRow) => {
+        minutes.getRows(1,lastRow).then((r) => {
+            minutes.setRow(r.length+1, {"Date": content[1], "Meeting Type": content[2], "Minutes":  content.slice(3).join(" ")}).then(() => {
+                console.log("TechClubBot: minutes set!");
+                msg.reply("Minutes set!");
+            });
         });
     });
 }
@@ -458,13 +485,171 @@ let getMinutes = (msg) => {
             return;
         }
     }
-    minutes.getRows(2,1000).then((r) => { //Search up to 999 meetings
-        if (r.length <= num) {
-            msg.reply("There's no meeting that far back!");
-            return;
-        }
-        msg.channel.send("Meeting Date: " + r[r.length-num-1]["Date"]);
-        msg.channel.send("Meeting Type: " + r[r.length-num-1]["Meeting Type"]);
-        msg.channel.send("Meeting Minutes: " + r[r.length-num-1]["Minutes"]);
+    minutes.getLastRowIndex().then((lastRow) => {
+        minutes.getRows(1,lastRow).then((r) => {
+            if (r.length <= num) {
+                msg.reply("There's no meeting that far back!");
+                return;
+            }
+            msg.channel.send("Meeting Date: " + r[r.length-num-1]["Date"]);
+            msg.channel.send("Meeting Type: " + r[r.length-num-1]["Meeting Type"]);
+            msg.channel.send("Meeting Minutes: " + r[r.length-num-1]["Minutes"]);
+        });
     });
+}
+
+/*
+            `addmeeting DAY|MONTH|YEAR|TYPE|TIME_START|TIME_END`\t\t\t\t\tSchedule a meeting\n\
+            `removemeeting DAY|MONTH|YEAR|TYPE|TIME_START`\t\t\t\t\tUn-schedule a meeting\n");
+*/
+/**
+ * Add a meeting as determined by msg (content of msg should be: "addmeeting DATE|TYPE|TIME_START|TIME_END")
+ * Note: DAY, MONTH, YEAR should be integers. TYPE should be either G or L. TIME_START and TIME_END should be in the form HRS:MINS
+ * 
+ * @function addMeeting
+ * @param {Object} msg Message
+ */
+let addMeeting = (msg) => {
+    let content = msg.content.substring(msg.content.indexOf(" "));
+    if (!content) {
+        msg.reply("Please include meeting details");
+        return;
+    }
+    content = content.replace(" ", "").split("|");
+    if (content.length < 6) {
+        msg.reply("Please include all required fields: DAY|MONTH|YEAR|TYPE|TIME_START|TIME_END");
+        return;
+    }
+    calendar.getLastRowIndex().then((lastRow) => {
+        calendar.getRows(1,lastRow).then((r) => {
+            calendar.setRow(r.length+1, {"Day": content[0], "Month": content[1], "Year": content[2], "Meeting Type": content[3], "Time Start": content[4], "Time End": content[5]}).then(() => {
+                console.log("TechClubBot: Meeting scheduled!");
+                msg.reply("Meeting scheduled!");
+            });
+        });
+    });
+}
+
+/**
+ * Remove a meeting as determined by msg (content of msg should be: "removemeeting DATE|TYPE|TIME_START")
+ * 
+ * @function removeMeeting
+ * @param {Object} msg Message
+ */
+let removeMeeting = (msg) => {
+    let content = msg.content.substring(msg.content.indexOf(" "));
+    if (!content) {
+        msg.reply("Please include meeting details");
+        return;
+    }
+    content = content.replace(" ", "").split("|");
+    if (content.length < 5) {
+        msg.reply("Please include all required fields: DAY|MONTH|YEAR|TYPE|TIME_START");
+        return;
+    }
+    calendar.getLastRowIndex().then((lastRow) => {
+        calendar.getRows(1,lastRow).then((r) => {
+            let removeList = [];
+            r.forEach((row, i) => { //Get a list of indexes of rows to remove
+                if (row["Day"] == content[0]
+                    && row["Month"] == content[1]
+                    && row["Year"] == content[2]
+                    && row["Meeting Type"] == content[3]
+                    && row["Time Start"] == content[4]) {
+                    removeList.push(i);
+                    console.log("Match found: ", row, content);
+                } else {
+                    console.log("Match not found: ", row, content);
+                }
+            });
+            if (removeList.length > 0) {
+                calendar.deleteRow(removeList[0]).then(() => {
+                    console.log("TechClubBot: deleted row in calendar");
+                    msg.reply("one meeting was removed");
+                });
+            } else {
+                console.log("TechClubBot: no matching meetings were found");
+                msg.reply("no matching meetings were found");
+            }
+        });
+    });
+}
+
+/**
+ * Print the meeting calendar to the channel msg was sent in
+ * 
+ * @function showMeetingCalendar
+ * @param {Object} msg Message
+ */
+let showMeetingCalendar = async (msg) => {
+    let weeks = "";
+    let meetings = "";
+    let date = new Date(); //Date placeholder
+    let mtgs = await (calendar.getRows(2, await calendar.getLastRowIndex()));
+    mtgs = mtgs.filter((mtg) => mtg["Month"] == date.getMonth()+1 && mtg["Year"] == date.getFullYear());
+    if (mtgs.length > 1) {
+        meetings = mtgs.reduce((prev, curr, i) => {
+            if (i==1) {
+                return meetingString(prev) + "\n" + meetingString(curr) + "\n";
+            } else {
+                return prev + meetingString(curr) + "\n";
+            }
+        });
+    } else if (mtgs.length == 1) {
+        meetings = meetingString(mtgs[0]);
+    }
+
+    //Next create the weeks
+    let mtgsReversed = {};
+    mtgs.forEach((mtg) => {
+        if (!mtgsReversed[mtg["Day"]]) {
+            mtgsReversed[mtg["Day"]] = mtg;
+        } else {
+            mtgsReversed[mtg["Day"]]["Meeting Type"] = "*";
+        }
+    })
+    let last = new Date(date.getFullYear(), date.getMonth()+1, 0).getDate(); //Last day of month
+    let day = 1; //Day counter
+    for (let w=0; w<5; w++) { //Weeks in month
+        for (let i=0; i<7; i++) { //Days in week
+            let curr = new Date(date.getFullYear(), date.getMonth(), day); //Get current day from day counter
+            if (i == curr.getDay() && (day <= last)) { //If it's actually in the month, add it
+                if (mtgsReversed[day]) {
+                    weeks += "║ " + mtgsReversed[day]["Meeting Type"] + " ";
+                } else {
+                    weeks += "║   ";
+                }
+                day++;
+            } else { //Otherwise increment I and add an X
+                weeks += "║ X ";
+            }
+        }
+        weeks += "║\n";
+        if (w < 4) {
+            weeks += "║═══╬═══╬═══╬═══╬═══╬═══╬═══║\n";
+        }
+    }
+    
+    let cal = "**Meeting Calendar for " + date.toLocaleString('default', { month: 'long' }) + "**\n```\n\
+╔═══╦═══╦═══╦═══╦═══╦═══╦═══╗\n\
+║ Su║ M ║ Tu║ W ║ Th║ F ║ Sa║\n\
+║═══╬═══╬═══╬═══╬═══╬═══╬═══║\n" + weeks + "\
+╚═══╩═══╩═══╩═══╩═══╩═══╩═══╝\n\
+Legend:\n\tG - General Meeting\n\tL - Leadership Meeting\n\t* - Multiple\n```\n\
+**Meeting List:**```\n\
+Day\tType\tStart Time\tEnd Time\n" + meetings + "\
+    ```\n\
+    ";
+    msg.channel.send(cal);
+}
+
+/**
+ * Get the string representation of the meeting object for printing in the list
+ * 
+ * @function meetingString
+ * @param {Object} meeting Meeting object
+ * @returns {string} String of meeting
+ */
+let meetingString = (meeting) => {
+    return (meeting.Day < 10 ? " " : "") + meeting.Day + "\t   " + meeting["Meeting Type"] + "\t\t" + meeting["Time Start"] + "\t\t " + meeting["Time End"]
 }
