@@ -2,20 +2,34 @@ const Discord = require("discord.js");
 const bot = new Discord.Client();
 const http = require("http");
 const fs = require("fs");
+const sheets = require("simplegooglesheetsjs");
+const { removeListener } = require("process");
 
 const TOKEN = process.env.TOKEN || require("./TOKEN.json").token; //Bot login token
-bot.login(TOKEN);
+const GOOGLE_AUTH_EMAIL = process.env.GOOGLE_AUTH_EMAIL || require("./GOOGLE_AUTH.json").client_email; //Google Service Account credentials
+const GOOGLE_AUTH_KEY = process.env.GOOGLE_AUTH_KEY || require("./GOOGLE_AUTH.json").private_key; //Google Service Account credentials
+const GOOGLE_SHEET_ID = process.env.GOOGLE_SHEET_ID || require("./GOOGLE_SHEET_ID.json").id; //Google Sheet Email
+
+bot.login(TOKEN); //Set up the Discord Bot
+
+let minutes = new sheets(); //Set up the minutes
+let calendar = new sheets(); //Set up the calendar
+minutes.authorizeServiceAccount(GOOGLE_AUTH_EMAIL, GOOGLE_AUTH_KEY);
+minutes.setSpreadsheet(GOOGLE_SHEET_ID).then(() => minutes.setSheet("Minutes"));
+calendar.authorizeServiceAccount(GOOGLE_AUTH_EMAIL, GOOGLE_AUTH_KEY);
+calendar.setSpreadsheet(GOOGLE_SHEET_ID).then(() => calendar.setSheet("Calendar"));
+
 
 const index = fs.readFileSync("index.html"); //Index file to serve
 
 let mode = "regular"; //The bot's current mode
 
 let warnedUsers = {}; //Users with warnings (in the format { username: attempts })
-let vote = {
+
+let vote = { //Hold the current vote
     options: {},
     voters: []
-}; //Hold the current vote
-
+};
 
 /**
  * Event handler for startup of Bot
@@ -34,9 +48,9 @@ bot.on("message", (msg) => {
         if (msg.content.startsWith("!")) {
             let cmd = parseCommand(msg);
             generalCommand(cmd, msg);
-        } else if ((msgContentList.includes("hello") || msgContentList.includes("hi") || msgContentList.includes("hey")) && msg.author.username !== "TechClubBot") {
+        } else if ((msgContentList.includes("hello") || msgContentList.includes("hi") || msgContentList.includes("hey")) && msg.author.username !== "TechClubBot" && msgContentList.length <= 5) { //Run the say hi function
             sayHi(msg);
-        } else if ((msg.content.toLowerCase() == "lol" || msg.content.toLowerCase() == "xd") && msg.author.username !== "polarpiberry") {
+        } else if ((msgContentList[0] == "lol" || msgContentList[0] == "xd") && msg.author.username !== "polarpiberry" && msgContentList.length <= 2) {
             msg.reply(`:warning: Please do not continue behavior like this`);
             warnUser(msg, 10);
         }
@@ -109,13 +123,18 @@ let generalCommand = (cmd, msg) => {
             `hi`\t\t\t\t\tGreetings from the bot\n\
             `say`\t\t\t\t\tSpeak up, little one!\n\
             `status`\t\t\t\t\tMy status\n\
-            `help`\t\t\t\t\tHelp me!\n\n\
+            `help`\t\t\t\t\tHelp me!\n\
+            `getminutes MEETING_#`\t\t\t\t\tGet the meeting minutes (meeting # is the number of meeting prior to the last meeting [e.g. 1 => meeting before last meeting]. No number or 0 for previous meeting)\n\
+            `calendar`\t\t\t\t\tPrint out the meeting calendar and list\n\n\
             **Leadership Only**\n\
             `vote`\t\t\t\t\tCreate a vote/poll of the channel\n\
             `selfdestruct`\t\t\t\t\tSelf destruct the channel\n\
             `ban @USER`\t\t\t\t\tBan the user\n\
             `kick @USER`\t\t\t\t\tKick the user\n\
-            `deleteall`\t\t\t\t\tDelete all messages on this channel\n");
+            `deleteall`\t\t\t\t\tDelete all messages on this channel\n\
+            `setminutes DATE TYPE MINUTES`\t\t\t\t\tSet the meeting minutes\n\
+            `addmeeting DAY|MONTH|YEAR|TYPE|TIME_START|TIME_END`\t\t\t\t\tSchedule a meeting\n\
+            `removemeeting DAY|MONTH|YEAR|TYPE|TIME_START`\t\t\t\t\tUn-schedule a meeting\n");
             break;
         case "deleteall":
             deleteAll(msg);
@@ -133,7 +152,7 @@ let generalCommand = (cmd, msg) => {
             selfDestruct(10);
             break;
         case "vote":
-            checkPermissions(msg, "Admin").then(() => {
+            checkPermissions(msg, "Leadership").then(() => {
                 msg.channel.send("**Welcome to Voting Mode!**\n\
 :warning: **Once the vote starts, you will have 60 seconds to cast your vote**\n\
 :warning: **To vote, react with an emoji to one of the options**\n\
@@ -146,6 +165,37 @@ let generalCommand = (cmd, msg) => {
                 msg.reply(`:no_entry: Only admins can do that`);
                 console.warn("TechClubBot: vote stopped: insufficient permissions");
             })
+            break;
+        case "setminutes":
+            checkPermissions(msg, "Leadership").then(() => {
+                setMinutes(msg);
+            }).catch(() => {
+                msg.reply(`:no_entry: Only admins can do that`);
+                console.warn("TechClubBot: no minutes set: insufficient permissions");
+            });
+            break;
+        case "getminutes":
+            getMinutes(msg);
+            break;
+        case "addmeeting":
+            checkPermissions(msg, "Leadership").then(() => {
+                addMeeting(msg); //To schedule a meeting
+            }).catch((e) => {
+                console.log(e)
+                msg.reply(`:no_entry: Only admins can do that`);
+                console.warn("TechClubBot: no meeting added: insufficient permissions");
+            });
+            break;
+        case "removemeeting":
+            checkPermissions(msg, "Leadership").then(() => {
+                removeMeeting(msg); //To unschedule a meeting
+            }).catch(() => {
+                msg.reply(`:no_entry: Only admins can do that`);
+                console.warn("TechClubBot: no meeting removed: insufficient permissions");
+            });
+            break;
+        case "calendar":
+            showMeetingCalendar(msg);
             break;
         default:
             console.warn("TechClubBot: command not found");
@@ -270,11 +320,9 @@ let runVote = (msg) => {
                 }
                 msg.channel.send(`:checkered_flag: The winner is **${winner}**`); //print winner and check for ties
                 msg.channel.send("*Exited Voting Mode...*");
-                let memberRole = msg.guild.roles.cache.find((r) => { return r.name == "Member" });
                 let mutedRole = msg.guild.roles.cache.find((r) => { return r.name == "Muted" });
                 for (let user in warnedUsers) {
                     if (warnedUsers[user].muted) {
-                        msg.member.roles.add(memberRole);
                         msg.member.roles.remove(mutedRole);
                     }
                 }
@@ -318,10 +366,18 @@ let deleteAll = (msg) => {
  * @param {string} cmd Command (kick or ban)
  */
 let kickOrBan = (msg, cmd) => {
+    if (!msg.mentions.members.first()) {
+        msg.reply(":warning: you need to specify at least one person to kick or ban");
+        return;
+    }
+    if (msg.mentions.members.first() && msg.mentions.members.first().roles.cache.some((r) => { return "Leadership" == r.name })) {
+        msg.reply("HA HA HA you can't ban a member of Leadership");
+        return;
+    }
     checkPermissions(msg, "Leadership").then(() => {
         let usr = msg.mentions.members.first();
-        console.log("TechClubBot: " + cmd + " requested for " + usr.username);
-        if (usr && usr.username != "TechClubBot") {
+        console.log("TechClubBot: " + cmd + " requested for ", usr);
+        if (usr && usr.user.username.toLowerCase() != "techclubbot") {
             if (cmd == "kick") {
                 msg.channel.send(`${usr} is now kicked from the server!`);
                 usr.kick();
@@ -331,13 +387,14 @@ let kickOrBan = (msg, cmd) => {
                 usr.ban();
                 return true;
             }
-        } else if (usr.username == "TechClubBot") {
+        } else if (usr.user.username.toLowerCase() == "techclubbot") {
             msg.reply("HA HA HA HA HA HA HA");
         } else {
             msg.reply("No user specified");
             return false;
         }
-    }).catch(() => {
+    }).catch((e) => {
+        console.log("Error: ", e)
         msg.reply(`:no_entry: Only admins can do that`);
         console.log("TechClubBot: insufficient user permissions")
     });
@@ -386,4 +443,213 @@ let sayHi = (msg) => {
 let say = (msg) => {
     msg.channel.send(`@${msg.author.username} says${msg.content.substring(msg.content.indexOf(" "))}`);
     msg.delete();
+}
+
+/**
+ * Set the meeting minutes for a meeting today
+ * 
+ * @function setMinutes
+ * @param {Object} msg Message of meeting minutes
+ */
+let setMinutes = (msg) => {
+    let content = msg.content.split(" ");
+    if (content.length < 4) {
+        msg.reply("Please specify a date, a meeting type, and the minutes");
+        return;
+    }
+    minutes.getLastRowIndex().then((lastRow) => {
+        minutes.getRows(1,lastRow).then((r) => {
+            minutes.setRow(r.length+1, {"Date": content[1], "Meeting Type": content[2], "Minutes":  content.slice(3).join(" ")}).then(() => {
+                console.log("TechClubBot: minutes set!");
+                msg.reply("Minutes set!");
+            });
+        });
+    });
+}
+
+/**
+ * Get the meeting minutes for a meeting
+ * 
+ * @function getMinutes
+ * @param {Object} msg Message
+ */
+let getMinutes = (msg) => {
+    let content = msg.content.split(" ");
+    let num;
+    if (content.length < 2) {
+        num = 0;
+    } else {
+        num = parseInt(content[1]);
+        if (isNaN(num) || num < 0) {
+            msg.reply("Please specify a valid meeting number (positive integer)");
+            return;
+        }
+    }
+    minutes.getLastRowIndex().then((lastRow) => {
+        minutes.getRows(1,lastRow).then((r) => {
+            if (r.length <= num) {
+                msg.reply("There's no meeting that far back!");
+                return;
+            }
+            msg.channel.send("Meeting Date: " + r[r.length-num-1]["Date"]);
+            msg.channel.send("Meeting Type: " + r[r.length-num-1]["Meeting Type"]);
+            msg.channel.send("Meeting Minutes: " + r[r.length-num-1]["Minutes"]);
+        });
+    });
+}
+
+/*
+            `addmeeting DAY|MONTH|YEAR|TYPE|TIME_START|TIME_END`\t\t\t\t\tSchedule a meeting\n\
+            `removemeeting DAY|MONTH|YEAR|TYPE|TIME_START`\t\t\t\t\tUn-schedule a meeting\n");
+*/
+/**
+ * Add a meeting as determined by msg (content of msg should be: "addmeeting DATE|TYPE|TIME_START|TIME_END")
+ * Note: DAY, MONTH, YEAR should be integers. TYPE should be either G or L. TIME_START and TIME_END should be in the form HRS:MINS
+ * 
+ * @function addMeeting
+ * @param {Object} msg Message
+ */
+let addMeeting = (msg) => {
+    let content = msg.content.substring(msg.content.indexOf(" "));
+    if (!content) {
+        msg.reply("Please include meeting details");
+        return;
+    }
+    content = content.replace(" ", "").split("|");
+    if (content.length < 6) {
+        msg.reply("Please include all required fields: DAY|MONTH|YEAR|TYPE|TIME_START|TIME_END");
+        return;
+    }
+    calendar.getLastRowIndex().then((lastRow) => {
+        calendar.getRows(1,lastRow).then((r) => {
+            calendar.setRow(r.length+1, {"Day": content[0], "Month": content[1], "Year": content[2], "Meeting Type": content[3], "Time Start": content[4], "Time End": content[5]}).then(() => {
+                console.log("TechClubBot: Meeting scheduled!");
+                msg.reply("Meeting scheduled!");
+            });
+        });
+    });
+}
+
+/**
+ * Remove a meeting as determined by msg (content of msg should be: "removemeeting DATE|TYPE|TIME_START")
+ * 
+ * @function removeMeeting
+ * @param {Object} msg Message
+ */
+let removeMeeting = (msg) => {
+    let content = msg.content.substring(msg.content.indexOf(" "));
+    if (!content) {
+        msg.reply("Please include meeting details");
+        return;
+    }
+    content = content.replace(" ", "").split("|");
+    if (content.length < 5) {
+        msg.reply("Please include all required fields: DAY|MONTH|YEAR|TYPE|TIME_START");
+        return;
+    }
+    calendar.getLastRowIndex().then((lastRow) => {
+        calendar.getRows(1,lastRow).then((r) => {
+            let removeList = [];
+            r.forEach((row, i) => { //Get a list of indexes of rows to remove
+                if (row["Day"] == content[0]
+                    && row["Month"] == content[1]
+                    && row["Year"] == content[2]
+                    && row["Meeting Type"] == content[3]
+                    && row["Time Start"] == content[4]) {
+                    removeList.push(i);
+                    console.log("Match found: ", row, content);
+                } else {
+                    console.log("Match not found: ", row, content);
+                }
+            });
+            if (removeList.length > 0) {
+                calendar.deleteRow(removeList[0]).then(() => {
+                    console.log("TechClubBot: deleted row in calendar");
+                    msg.reply("one meeting was removed");
+                });
+            } else {
+                console.log("TechClubBot: no matching meetings were found");
+                msg.reply("no matching meetings were found");
+            }
+        });
+    });
+}
+
+/**
+ * Print the meeting calendar to the channel msg was sent in
+ * 
+ * @function showMeetingCalendar
+ * @param {Object} msg Message
+ */
+let showMeetingCalendar = async (msg) => {
+    let weeks = "";
+    let meetings = "";
+    let date = new Date(); //Date placeholder
+    let mtgs = await (calendar.getRows(2, await calendar.getLastRowIndex()));
+    mtgs = mtgs.filter((mtg) => mtg["Month"] == date.getMonth()+1 && mtg["Year"] == date.getFullYear());
+    if (mtgs.length > 1) {
+        meetings = mtgs.reduce((prev, curr, i) => {
+            if (i==1) {
+                return meetingString(prev) + "\n" + meetingString(curr) + "\n";
+            } else {
+                return prev + meetingString(curr) + "\n";
+            }
+        });
+    } else if (mtgs.length == 1) {
+        meetings = meetingString(mtgs[0]);
+    }
+
+    //Next create the weeks
+    let mtgsReversed = {};
+    mtgs.forEach((mtg) => {
+        if (!mtgsReversed[mtg["Day"]]) {
+            mtgsReversed[mtg["Day"]] = mtg;
+        } else {
+            mtgsReversed[mtg["Day"]]["Meeting Type"] = "*";
+        }
+    })
+    let last = new Date(date.getFullYear(), date.getMonth()+1, 0).getDate(); //Last day of month
+    let day = 1; //Day counter
+    for (let w=0; w<5; w++) { //Weeks in month
+        for (let i=0; i<7; i++) { //Days in week
+            let curr = new Date(date.getFullYear(), date.getMonth(), day); //Get current day from day counter
+            if (i == curr.getDay() && (day <= last)) { //If it's actually in the month, add it
+                if (mtgsReversed[day]) {
+                    weeks += "║ " + mtgsReversed[day]["Meeting Type"] + " ";
+                } else {
+                    weeks += "║   ";
+                }
+                day++;
+            } else { //Otherwise increment I and add an X
+                weeks += "║ X ";
+            }
+        }
+        weeks += "║\n";
+        if (w < 4) {
+            weeks += "║═══╬═══╬═══╬═══╬═══╬═══╬═══║\n";
+        }
+    }
+    
+    let cal = "**Meeting Calendar for " + date.toLocaleString('default', { month: 'long' }) + "**\n```\n\
+╔═══╦═══╦═══╦═══╦═══╦═══╦═══╗\n\
+║ Su║ M ║ Tu║ W ║ Th║ F ║ Sa║\n\
+║═══╬═══╬═══╬═══╬═══╬═══╬═══║\n" + weeks + "\
+╚═══╩═══╩═══╩═══╩═══╩═══╩═══╝\n\
+Legend:\n\tG - General Meeting\n\tL - Leadership Meeting\n\t* - Multiple\n```\n\
+**Meeting List:**```\n\
+Day\tType\tStart Time\tEnd Time\n" + meetings + "\
+    ```\n\
+    ";
+    msg.channel.send(cal);
+}
+
+/**
+ * Get the string representation of the meeting object for printing in the list
+ * 
+ * @function meetingString
+ * @param {Object} meeting Meeting object
+ * @returns {string} String of meeting
+ */
+let meetingString = (meeting) => {
+    return (meeting.Day < 10 ? " " : "") + meeting.Day + "\t   " + meeting["Meeting Type"] + "\t\t" + meeting["Time Start"] + "\t\t " + meeting["Time End"]
 }

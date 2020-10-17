@@ -1,7 +1,7 @@
 {
-  "name": "bottestinggrounds",
-  "version": "1.0.0",
-  "description": "BotTestingGrounds Discord Bot",
+  "name": "techclubbot",
+  "version": "1.1.0",
+  "description": "Bellevue College Tech Club Discord Bot",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
@@ -11,6 +11,12 @@
   "dependencies": {
     "dblapi.js": "^2.4.1",
     "discord": "^0.8.2",
-    "discord.js": "^12.3.1"
+    "discord.js": "^12.3.1",
+    "simplegooglesheetsjs": "^0.1.4"
+  },
+  "homepage": "https://github.com/polarpiberry/TechClubBot",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/polarpiberry/TechClubBot.git"
   }
 }

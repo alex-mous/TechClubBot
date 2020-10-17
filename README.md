@@ -7,12 +7,6 @@ This is the Discord bot for the Bellevue College Tech Club. Join the bot develop
 
 * * *
 
-### Potential Improvements
-
-Add `calendar` function for meeting calendar, `remindme` for meeting reminders, and Admin-only commands to schedule meetings (such as `addmeeting`, `removemeeting`, `modifymeeting`, with automatic notifications to the `remindme` users and notifications in #general when meetings are close)
-
-* * *
-
 ### Installation
 
 To add the Bot to your own Discord server, please contact mee for the OAuth access.
@@ -31,12 +25,17 @@ Access the follow bot help page with !help. All voting commands, as well as thos
 | `say`          | Speak up, little one!                                       |
 | `status`       | My status                                                   |
 | `help`         | Show the help                                               |
+| `getminutes MEETING_#`    | Get the meeting minutes (meeting # is the number of meeting prior to the last meeting [e.g. 1 => meeting before last meeting]. No number or 0 for previous meeting) |
+| `calendar` | Print out the meeting calendar and list |
 | *Admins Only*  | Commands below can be run by users with the role Admin only |
 | `vote`         | Create a vote/poll of the channel (enter Voting Mode)       |
 | `selfdestruct` | Self destruct the channel                                   |
 | `ban @USER`    | Ban @USER                                                   |
 | `kick @USER`   | Kick @USER                                                  |
 | `deleteall`    | Delete all messages in channel                              |
+| `setminutes DATE TYPE MINUTES` | Set the meeting minutes                     |
+| `addmeeting DAY|MONTH|YEAR|TYPE|TIME_START|TIME_END` | Schedule a meeting |
+| `removemeeting DAY|MONTH|YEAR|TYPE|TIME_START` | Un-schedule a meeting |
 
 #### Voting Mode Commands
 
