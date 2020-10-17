@@ -7,7 +7,7 @@ const { removeListener } = require("process");
 
 const TOKEN = process.env.TOKEN || require("./TOKEN.json").token; //Bot login token
 const GOOGLE_AUTH_EMAIL = process.env.GOOGLE_AUTH_EMAIL || require("./GOOGLE_AUTH.json").client_email; //Google Service Account credentials
-const GOOGLE_AUTH_KEY = process.env.GOOGLE_AUTH_KEY || require("./GOOGLE_AUTH.json").private_key; //Google Service Account credentials
+const GOOGLE_AUTH_KEY = process.env.GOOGLE_AUTH_KEY.replace(/\\n/gm, '\n') || require("./GOOGLE_AUTH.json").private_key; //Google Service Account credentials
 const GOOGLE_SHEET_ID = process.env.GOOGLE_SHEET_ID || require("./GOOGLE_SHEET_ID.json").id; //Google Sheet Email
 
 bot.login(TOKEN); //Set up the Discord Bot
