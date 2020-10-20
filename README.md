@@ -7,15 +7,9 @@ This is the Discord bot for the Bellevue College Tech Club. Join the bot develop
 
 * * *
 
-### Installation
-
-To add the Bot to your own Discord server, please contact mee for the OAuth access.
-
-* * *
-
 ### Usage
 
-Access the follow bot help page with !help. All voting commands, as well as those under the Admin Only heading require the "Admin" role.
+Access the follow bot help page with !help. All voting commands, as well as those under the Leadership Only heading require the "Leadership" role, with the same permissions as required to execute the commands (such as permission to ban users to use the !ban command).
 
 #### General Commands
 
@@ -27,21 +21,21 @@ Access the follow bot help page with !help. All voting commands, as well as thos
 | `help`         | Show the help                                               |
 | `getminutes MEETING_#`    | Get the meeting minutes (meeting # is the number of meeting prior to the last meeting [e.g. 1 => meeting before last meeting]. No number or 0 for previous meeting) |
 | `calendar` | Print out the meeting calendar and list |
-| *Admins Only*  | Commands below can be run by users with the role Admin only |
+| *Leadership Only*  | Commands below can be run by users with the role Leadership only |
 | `vote`         | Create a vote/poll of the channel (enter Voting Mode)       |
 | `selfdestruct` | Self destruct the channel                                   |
 | `ban @USER`    | Ban @USER                                                   |
 | `kick @USER`   | Kick @USER                                                  |
 | `deleteall`    | Delete all messages in channel                              |
-| `setminutes DATE TYPE MINUTES` | Set the meeting minutes                     |
-| `addmeeting DAY|MONTH|YEAR|TYPE|TIME_START|TIME_END` | Schedule a meeting |
-| `removemeeting DAY|MONTH|YEAR|TYPE|TIME_START` | Un-schedule a meeting |
+| `setminutes DATE TYPE MINUTES`                              | Set the meeting minutes  |
+| `addmeeting DAY\|MONTH\|YEAR\|TYPE\|TIME_START\|TIME_END`   | Schedule a meeting       |
+| `removemeeting DAY\|MONTH\|YEAR\|TYPE\|TIME_START`          | Un-schedule a meeting    |
 
 #### Voting Mode Commands
 
 | Command                                   | Description                                                 |
 |-------------------------------------------|-------------------------------------------------------------|
-| *Admins Only*                             | Commands below can be run by users with the role Admin only |
+| *Leadership Only*                         | Commands below can be run by users with the role Admin only |
 | `start Option 1\|Option 2\|...\|Option N` | Start the vote with the various options                     |
 | `cancel`                                  | Cancel the vote before it starts                            |
 | `help`                                    | Show the help                                               |
