@@ -60,11 +60,11 @@ bot.on("message", (msg) => {
                 msg.reply(`:no_entry: Only admins can do that`);
                 console.log("TechClubBot: someone tried to control a vote without permission");
             });
-        } else if (msg.author.username !== "TechClubBot") { //Don't catch TechClubBot messages
+        } /*else if (msg.author.username !== "TechClubBot") { //Don't catch TechClubBot messages
             checkPermissions(msg, "Leadership").catch((err) => { //Prevent normal users from sending messages
                 warnUser(msg, 4);
             });
-        }
+        }*/
     }
 });
 
@@ -73,9 +73,7 @@ bot.on("message", (msg) => {
  */
 bot.on("guildMemberAdd", (member) => {
     console.log("TechClubBot: new user added!");
-    //let memberRole = member.guild.roles.cache.find((r) => { return r.name == "Member" });
     member.guild.channels.cache.find((ch) => { return ch.name == "welcome"}).send(`Welcome to the server, ${member.user.username}!`);
-    //member.roles.add(memberRole); //Add the member role
 });
 
 bot.on("error", (e) => console.error(e));
@@ -294,6 +292,7 @@ let runVote = (msg) => {
         if (options.length > 1) {
             msg.channel.send("@everyone Starting vote...\nPlace your votes below:\n  ");
             const filter = (_, usr) => { return !vote.voters[usr.username]; }; //Filter to only those who haven't yet voted
+            msg.channel.updateOverwrite(msg.channel.guild.roles.everyone, { SEND_MESSAGES: false });
             options.forEach((opt, i) => { //Initialize the votes
                 vote.options[opt] = 0;
                 msg.channel.send(`**${opt}**\n `).then((tempMsg) => {
@@ -307,6 +306,7 @@ let runVote = (msg) => {
             });
             setTimeout(() => { //Wait until end of vote and print out results
                 msg.channel.send(`:warning: **Vote Closed** - Results`);
+                msg.channel.updateOverwrite(msg.channel.guild.roles.everyone, { SEND_MESSAGES: true });
                 let winner = "";
                 for (let opt in vote.options) {
                     if (winner && vote.options[opt] > vote.options[winner]) {
@@ -324,6 +324,7 @@ let runVote = (msg) => {
                 for (let user in warnedUsers) {
                     if (warnedUsers[user].muted) {
                         msg.member.roles.remove(mutedRole);
+                        delete warnedUsers[user];
                     }
                 }
                 mode = "regular";
