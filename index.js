@@ -60,7 +60,7 @@ bot.on("message", (msg) => {
                 msg.reply(`:no_entry: Only admins can do that`);
                 console.log("TechClubBot: someone tried to control a vote without permission");
             });
-        } else {
+        } else if (msg.author.username !== "TechClubBot") { //Don't catch TechClubBot messages
             checkPermissions(msg, "Leadership").catch((err) => { //Prevent normal users from sending messages
                 warnUser(msg, 4);
             });
