@@ -4,9 +4,9 @@ const http = require("http");
 const sheets = require("simplegooglesheetsjs");
 
 const TOKEN = process.env.TOKEN || require("./TOKEN.json").token; //Bot login token
-const GOOGLE_AUTH_EMAIL = require("./GOOGLE_AUTH.json").client_email || process.env.GOOGLE_AUTH_EMAIL; //Google Service Account credentials
-const GOOGLE_AUTH_KEY = require("./GOOGLE_AUTH.json").private_key || process.env.GOOGLE_AUTH_KEY.replace(/\\n/gm, '\n'); //Google Service Account credentials
-const GOOGLE_SHEET_ID = require("./GOOGLE_SHEET_ID.json").id || process.env.GOOGLE_SHEET_ID; //Google Sheet Email
+const GOOGLE_AUTH_EMAIL = process.env.GOOGLE_AUTH_EMAIL || require("./GOOGLE_AUTH.json").client_email; //Google Service Account credentials
+const GOOGLE_AUTH_KEY = (process.env.GOOGLE_AUTH_KEY && process.env.GOOGLE_AUTH_KEY.replace(/\\n/gm, '\n')) || require("./GOOGLE_AUTH.json").private_key;
+const GOOGLE_SHEET_ID = process.env.GOOGLE_SHEET_ID || require("./GOOGLE_SHEET_ID.json").id; //Google Sheet Email
 
 let minutes = new sheets(); //Set up the minutes
 let calendar = new sheets(); //Set up the calendar
@@ -17,8 +17,6 @@ calendar.setSpreadsheet(GOOGLE_SHEET_ID).then(() => calendar.setSheet("Calendar"
 
 
 let mode = "regular"; //The bot's current mode
-
-let warnedUsers = {}; //Users with warnings (in the format { username: attempts })
 
 let vote = { //Hold the current vote
     options: {},
@@ -250,49 +248,23 @@ let parseCommand = (msg) => {
 }
 
 /**
- * Warn and mute the user (if 0 attempts left and not an Admin)
- * 
- * @function warnUser
- * @param {Object} msg Message object
- * @param {number} maxNo Maximum number of attempts
- */
-let warnUser = (msg, maxNo) => {
-    checkPermissions(msg, "Leadership").then(() => { //Only caution non-admins
-        console.log("TechClubBot: extra message from admin");
-    }).catch(() => {
-        let i = maxNo;
-        if (warnedUsers[msg.author.username]) {
-            i = warnedUsers[msg.author.username].left;
-        }
-        if (i > 1) {
-            warnedUsers[msg.author.username] = { left: i-1 };
-            msg.reply(`:warning: If you try ${i-1} more times, you will be kicked from the server`);
-            console.log(`TechClubRobot: cautioned user ${msg.author.username} with attempts left: ${i-1}`);
-        } else {
-            msg.member.kick();
-            console.log(`TechClubRobot: kicked user ${msg.author.username}`);
-            msg.channel.send(`:x: ${msg.author.username} has been kicked for texting too much during a vote`);
-        }
-    })
-}
-
-/**
  * Run a vote
  * 
  * @function runVote
  * @param {Object} msg Message object to run vote off of (!start command)
  */
-let runVote = (msg) => {
+let runVote = async (msg) => {
     try {
         let options = msg.content.substring(msg.content.indexOf(" ")+1).split("|");
         if (options.length > 1) {
+            let voteTimeMs = 60000;
             msg.channel.send("@everyone Starting vote...\nPlace your votes below:\n  ");
             const filter = (_, usr) => { return !vote.voters[usr.username]; }; //Filter to only those who haven't yet voted
             msg.channel.updateOverwrite(msg.channel.guild.roles.everyone, { SEND_MESSAGES: false });
-            options.forEach((opt, i) => { //Initialize the votes
+            options.forEach((opt) => { //Initialize the votes
                 vote.options[opt] = 0;
                 msg.channel.send(`**${opt}**\n `).then((tempMsg) => {
-                    let collector = tempMsg.createReactionCollector(filter, { time: 60000 });
+                    let collector = tempMsg.createReactionCollector(filter, { time: voteTimeMs });
                     collector.on("collect", (_, usr) => { //Collect votes
                         console.log(`Collected a reaction from ${usr.tag}`);
                         vote.voters[usr.username] = true;
@@ -300,6 +272,19 @@ let runVote = (msg) => {
                     });
                 });
             });
+            let timerMsg = await msg.channel.send("**" + voteTimeMs/1000 + " seconds remaining...**");
+            let timerInterval = setInterval(() => { //Send time left warning every 5 seconds
+                voteTimeMs -= 5000;
+                if (voteTimeMs > 30000) {
+                    timerMsg.edit("**" + voteTimeMs/1000 + " seconds remaining...**");
+                } else if (voteTimeMs > 15000) {
+                    timerMsg.edit("**:warning: Only " + voteTimeMs/1000 + " seconds remaining!**");
+                } else if (voteTimeMs > 0) {
+                    timerMsg.edit("**:no_entry: Only " + voteTimeMs/1000 + " seconds remaining!**\n**Place your vote now if you haven't done so already!**");
+                } else {
+                    timerMsg.delete();
+                }
+            }, 5000);
             setTimeout(() => { //Wait until end of vote and print out results
                 msg.channel.send(`:warning: **Vote Closed** - Results`);
                 msg.channel.updateOverwrite(msg.channel.guild.roles.everyone, { SEND_MESSAGES: true });
@@ -316,14 +301,8 @@ let runVote = (msg) => {
                 }
                 msg.channel.send(`:checkered_flag: The winner is **${winner}**`); //print winner and check for ties
                 msg.channel.send("*Exited Voting Mode...*");
-                let mutedRole = msg.guild.roles.cache.find((r) => { return r.name == "Muted" });
-                for (let user in warnedUsers) {
-                    if (warnedUsers[user].muted) {
-                        msg.member.roles.remove(mutedRole);
-                        delete warnedUsers[user];
-                    }
-                }
                 mode = "regular";
+                clearInterval(timerInterval); //Remove the timer
             }, 61000);
         } else {
             msg.channel.send("Incorrectly formatted query. Must be in the form `!vote OPTION 1|OPTION 2|OPTION N`");
