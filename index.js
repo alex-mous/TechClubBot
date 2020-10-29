@@ -1,16 +1,12 @@
 const Discord = require("discord.js");
 const bot = new Discord.Client();
 const http = require("http");
-const fs = require("fs");
 const sheets = require("simplegooglesheetsjs");
-const { removeListener } = require("process");
 
 const TOKEN = process.env.TOKEN || require("./TOKEN.json").token; //Bot login token
-const GOOGLE_AUTH_EMAIL = process.env.GOOGLE_AUTH_EMAIL || require("./GOOGLE_AUTH.json").client_email; //Google Service Account credentials
-const GOOGLE_AUTH_KEY = process.env.GOOGLE_AUTH_KEY.replace(/\\n/gm, '\n') || require("./GOOGLE_AUTH.json").private_key; //Google Service Account credentials
-const GOOGLE_SHEET_ID = process.env.GOOGLE_SHEET_ID || require("./GOOGLE_SHEET_ID.json").id; //Google Sheet Email
-
-bot.login(TOKEN); //Set up the Discord Bot
+const GOOGLE_AUTH_EMAIL = require("./GOOGLE_AUTH.json").client_email || process.env.GOOGLE_AUTH_EMAIL; //Google Service Account credentials
+const GOOGLE_AUTH_KEY = require("./GOOGLE_AUTH.json").private_key || process.env.GOOGLE_AUTH_KEY.replace(/\\n/gm, '\n'); //Google Service Account credentials
+const GOOGLE_SHEET_ID = require("./GOOGLE_SHEET_ID.json").id || process.env.GOOGLE_SHEET_ID; //Google Sheet Email
 
 let minutes = new sheets(); //Set up the minutes
 let calendar = new sheets(); //Set up the calendar
@@ -19,8 +15,6 @@ minutes.setSpreadsheet(GOOGLE_SHEET_ID).then(() => minutes.setSheet("Minutes"));
 calendar.authorizeServiceAccount(GOOGLE_AUTH_EMAIL, GOOGLE_AUTH_KEY);
 calendar.setSpreadsheet(GOOGLE_SHEET_ID).then(() => calendar.setSheet("Calendar"));
 
-
-const index = fs.readFileSync("index.html"); //Index file to serve
 
 let mode = "regular"; //The bot's current mode
 
@@ -36,6 +30,16 @@ let vote = { //Hold the current vote
  */
 bot.on('ready', () => {
     console.log("TechClubRobot: Ready");
+});
+
+/**
+ * Welcome handler for new users, and assigns Member role
+ */
+bot.on("guildMemberAdd", (member) => {
+    console.log("TechClubBot: new user added!");
+    //let memberRole = member.guild.roles.cache.find((r) => { return r.name == "Member" });
+    member.guild.channels.cache.find((ch) => { return ch.name == "welcome"}).send(`Welcome to the server, ${member.user.username}!`);
+    //member.roles.add(memberRole); //Add the member role
 });
 
 /**
@@ -56,36 +60,28 @@ bot.on("message", (msg) => {
             checkPermissions(msg, "Leadership").then(() => {
                 let cmd = parseCommand(msg);
                 voteCommand(cmd, msg);
-            }).catch((err) => {
+            }).catch(() => {
                 msg.reply(`:no_entry: Only admins can do that`);
                 console.log("TechClubBot: someone tried to control a vote without permission");
-            });
-        } /*else if (msg.author.username !== "TechClubBot") { //Don't catch TechClubBot messages
-            checkPermissions(msg, "Leadership").catch((err) => { //Prevent normal users from sending messages
-                warnUser(msg, 4);
-            });
-        }*/
+            })
+        }
     }
-});
-
-/**
- * Welcome handler for new users, and assigns Member role
- */
-bot.on("guildMemberAdd", (member) => {
-    console.log("TechClubBot: new user added!");
-    member.guild.channels.cache.find((ch) => { return ch.name == "welcome"}).send(`Welcome to the server, ${member.user.username}!`);
 });
 
 bot.on("error", (e) => console.error(e));
 bot.on("warn", (e) => console.warn(e));
 bot.on("debug", (e) => console.log(e));
 
+bot.login(TOKEN); //Set up the Discord Bot
+
+
+
 /**
- * Serve the webpage
+ * Serve the error page
  */
 http.createServer((req, res) => {
-    res.writeHead(200, {"Content-Type": "text/html"});
-    res.end(index);
+    res.writeHead(401);
+    res.end();
 }).listen(process.env.PORT || 3000);
 
 
@@ -499,10 +495,6 @@ let getMinutes = (msg) => {
     });
 }
 
-/*
-            `addmeeting DAY|MONTH|YEAR|TYPE|TIME_START|TIME_END`\t\t\t\t\tSchedule a meeting\n\
-            `removemeeting DAY|MONTH|YEAR|TYPE|TIME_START`\t\t\t\t\tUn-schedule a meeting\n");
-*/
 /**
  * Add a meeting as determined by msg (content of msg should be: "addmeeting DATE|TYPE|TIME_START|TIME_END")
  * Note: DAY, MONTH, YEAR should be integers. TYPE should be either G or L. TIME_START and TIME_END should be in the form HRS:MINS
@@ -652,5 +644,5 @@ Day\tType\tStart Time\tEnd Time\n" + meetings + "\
  * @returns {string} String of meeting
  */
 let meetingString = (meeting) => {
-    return (meeting.Day < 10 ? " " : "") + meeting.Day + "\t   " + meeting["Meeting Type"] + "\t\t" + meeting["Time Start"] + "\t\t " + meeting["Time End"]
+    return (meeting.Day < 10 ? " " : "") + meeting.Day + "\t   " + meeting["Meeting Type"] + "\t\t" + meeting["Time Start"] + "\t\t " + meeting["Time End"];
 }
