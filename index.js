@@ -59,7 +59,11 @@ bot.on("message", (msg) => {
             }).catch((err) => {
                 msg.reply(`:no_entry: Only admins can do that`);
                 console.log("TechClubBot: someone tried to control a vote without permission");
-            })
+            });
+        } else {
+            checkPermissions(msg, "Leadership").catch((err) => { //Prevent normal users from sending messages
+                warnUser(msg, 4);
+            });
         }
     }
 });
@@ -152,6 +156,7 @@ let generalCommand = (cmd, msg) => {
             checkPermissions(msg, "Leadership").then(() => {
                 msg.channel.send("**Welcome to Voting Mode!**\n\
 :warning: **Once the vote starts, you will have 60 seconds to cast your vote**\n\
+:warning: **Once the vote starts, you will not be allowed to send messages in the channel**\n\
 :warning: **To vote, react with an emoji to one of the options**\n\
 :warning: **Only your first reaction will be counted, so choose wisely**\n\
 *You will be muted once you have voted and will be unmuted again once the vote is complete*");
@@ -288,7 +293,6 @@ let runVote = (msg) => {
         let options = msg.content.substring(msg.content.indexOf(" ")+1).split("|");
         if (options.length > 1) {
             msg.channel.send("@everyone Starting vote...\nPlace your votes below:\n  ");
-            msg.channel.updateOverwrite(msg.channel.guild.roles.everyone, { SEND_MESSAGES: false }); //Prevent sending of messages
             const filter = (_, usr) => { return !vote.voters[usr.username]; }; //Filter to only those who haven't yet voted
             options.forEach((opt, i) => { //Initialize the votes
                 vote.options[opt] = 0;
@@ -302,7 +306,6 @@ let runVote = (msg) => {
                 });
             });
             setTimeout(() => { //Wait until end of vote and print out results
-                msg.channel.updateOverwrite(msg.channel.guild.roles.everyone, { SEND_MESSAGES: true });
                 msg.channel.send(`:warning: **Vote Closed** - Results`);
                 let winner = "";
                 for (let opt in vote.options) {
