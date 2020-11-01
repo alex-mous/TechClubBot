@@ -555,20 +555,30 @@ let removeMeeting = (msg) => {
  */
 let showMeetingCalendar = async (msg) => {
     let weeks = "";
-    let meetings = "";
+    let meetings = ["", ""]; //General and leadership meeting strings
     let date = new Date(); //Date placeholder
     let mtgs = await (calendar.getRows(2, await calendar.getLastRowIndex()));
-    mtgs = mtgs.filter((mtg) => mtg["Month"] == date.getMonth()+1 && mtg["Year"] == date.getFullYear());
-    if (mtgs.length > 1) {
-        meetings = mtgs.reduce((prev, curr, i) => {
-            if (i==1) {
-                return meetingString(prev) + "\n" + meetingString(curr) + "\n";
+    mtgs = mtgs.filter((mtg) => mtg["Month"] == date.getMonth()+1 && mtg["Year"] == date.getFullYear()); //Filter for only meetings in this month and year
+    if (mtgs) {
+        mtgs = mtgs.sort((prev, curr) => { //Sort the meetings so that they are in order of day
+            return prev["Day"] - curr["Day"];
+        });
+        meetings = [mtgs.filter((mtg) => mtg["Meeting Type"] == "G"), mtgs.filter((mtg) => mtg["Meeting Type"] == "L")];
+        meetings = meetings.map((meeting) => {
+            if (meeting.length > 0) {
+                return meeting.reduce((prev, curr, i) => { //Get the string representation of the meetings
+                    console.log(prev, curr);
+                    if (i >= 1) {
+                        return prev + "\n" + meetingString(curr);
+                    } else {
+                        return prev;
+                    }
+                }, meetingString(meeting[0]));
             } else {
-                return prev + meetingString(curr) + "\n";
+                return "";
             }
         });
-    } else if (mtgs.length == 1) {
-        meetings = meetingString(mtgs[0]);
+        
     }
 
     //Next create the weeks
@@ -608,8 +618,11 @@ let showMeetingCalendar = async (msg) => {
 ║═══╬═══╬═══╬═══╬═══╬═══╬═══║\n" + weeks + "\
 ╚═══╩═══╩═══╩═══╩═══╩═══╩═══╝\n\
 Legend:\n\tG - General Meeting\n\tL - Leadership Meeting\n\t* - Multiple\n```\n\
-**Meeting List:**```\n\
-Day\tType\tStart Time\tEnd Time\n" + meetings + "\
+**General Meeting List:**```\n\
+Day\tStart Time\t  End Time\n" + meetings[0] + "\
+    ```\n\
+**Leadership Meeting List:**```\n\
+Day\tStart Time\t  End Time\n" + meetings[1] + "\
     ```\n\
     ";
     msg.channel.send(cal);
@@ -623,5 +636,7 @@ Day\tType\tStart Time\tEnd Time\n" + meetings + "\
  * @returns {string} String of meeting
  */
 let meetingString = (meeting) => {
-    return (meeting.Day < 10 ? " " : "") + meeting.Day + "\t   " + meeting["Meeting Type"] + "\t\t" + meeting["Time Start"] + "\t\t " + meeting["Time End"];
+    return (meeting["Day"] < 10 ? " " : "") + meeting["Day"]
+        + "\t\t" + (meeting["Time Start"].length < 5 ? " " : "") + meeting["Time Start"]
+        + "\t\t " + (meeting["Time End"].length < 5 ? " " : "") + meeting["Time End"];
 }
