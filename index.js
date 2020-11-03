@@ -8,8 +8,12 @@
 const Discord = require("discord.js");
 const bot = new Discord.Client();
 const http = require("http");
+
+const chatbot = require("./chatbot.js"); //Load the chatbot module
+
 let commands;
 require("./commands.js").loadCommands((cmds) => commands = cmds); //Load the commands
+
 
 const TOKEN = process.env.TOKEN || require("./TOKEN.json").token; //Bot login token
 
@@ -48,6 +52,8 @@ bot.on("message", (msg) => {
     if (botMode == "regular") { //Regular mode
         if (cmd) {
             runCommand(cmd, msg);
+        } else if (msg.author.id != bot.user.id && (msg.mentions.has(bot.user) || msg.guild == null)) { //Handle instances of bot mentions or DMs
+            botReply(msg);
         } else if ((msgContentList.includes("hello") || msgContentList.includes("hi") || msgContentList.includes("hey")) && msg.author.username !== "TechClubBot" && msgContentList.length <= 5) { //Run the say hi function
             runCommand({command: "hi", params: msg.content.split(" ").slice(1)}, msg);
         }
@@ -174,6 +180,21 @@ let runVoteCommand = async (cmd, msg) => {
     }
 
     cmdFn.run(msg, cmd.params); //Run the command if all checks passed
+}
+
+/**
+ * Handle a message mentioning the bot
+ * 
+ * @param {Object} msg Message object
+ */
+const botReply = (msg) => {
+    chatbot.getResponse(msg.content).then((res) => {
+        if (res) {
+            msg.reply(res);
+        } else {
+            msg.reply("I'm sorry, but I'm not sure exactly what you mean.");
+        }
+    });
 }
 
 /**

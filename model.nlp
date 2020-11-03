@@ -1,0 +1,1425 @@
+{
+  "settings": {
+    "languages": [
+      "en"
+    ],
+    "forceNER": true,
+    "tag": "nlp",
+    "threshold": 0.5,
+    "autoLoad": true,
+    "autoSave": true,
+    "modelFileName": "model.nlp",
+    "calculateSentiment": true
+  },
+  "nluManager": {
+    "settings": {
+      "tag": "nlu-manager"
+    },
+    "locales": [
+      "en"
+    ],
+    "languageNames": {},
+    "domainManagers": {
+      "en": {
+        "settings": {
+          "locale": "en",
+          "trainByDomain": false,
+          "tag": "domain-manager-en",
+          "nluByDomain": {
+            "default": {
+              "className": "NeuralNlu",
+              "settings": {}
+            }
+          },
+          "useStemDict": true
+        },
+        "stemDict": {
+          "arrg": {
+            "intent": "moods.angry",
+            "domain": "default"
+          },
+          "do,no,not,that": {
+            "intent": "moods.angry",
+            "domain": "default"
+          },
+          "do,not": {
+            "intent": "moods.angry",
+            "domain": "default"
+          },
+          "not,talk,to,was,you": {
+            "intent": "moods.angry",
+            "domain": "default"
+          },
+          "no": {
+            "intent": "moods.angry",
+            "domain": "default"
+          },
+          "do,not,that": {
+            "intent": "moods.angry",
+            "domain": "default"
+          },
+          "am,angri,i": {
+            "intent": "moods.angry",
+            "domain": "default"
+          },
+          "is,that,wrong": {
+            "intent": "moods.angry",
+            "domain": "default"
+          },
+          "is,not,right,that": {
+            "intent": "moods.angry",
+            "domain": "default"
+          },
+          "arrg,no": {
+            "intent": "moods.angry",
+            "domain": "default"
+          },
+          "i,is,meant,not,that,what": {
+            "intent": "moods.angry",
+            "domain": "default"
+          },
+          "am,i,sad": {
+            "intent": "moods.sad",
+            "domain": "default"
+          },
+          "is,sad,that": {
+            "intent": "moods.sad",
+            "domain": "default"
+          },
+          "bad,that,too": {
+            "intent": "moods.sad",
+            "domain": "default"
+          },
+          "am,i,sorri": {
+            "intent": "moods.remorseful",
+            "domain": "default"
+          },
+          "fault,is,it,my": {
+            "intent": "moods.remorseful",
+            "domain": "default"
+          },
+          "am,fault,i,is,it,my,sorri": {
+            "intent": "moods.remorseful",
+            "domain": "default"
+          },
+          "i,respons,take": {
+            "intent": "moods.remorseful",
+            "domain": "default"
+          },
+          "caus,have,i,wrong": {
+            "intent": "moods.remorseful",
+            "domain": "default"
+          },
+          "caus,harm,have,i": {
+            "intent": "moods.remorseful",
+            "domain": "default"
+          },
+          "forgiv,me,pleas": {
+            "intent": "moods.remorseful",
+            "domain": "default"
+          },
+          "for,forgiv,me,my,wrong": {
+            "intent": "moods.remorseful",
+            "domain": "default"
+          },
+          "hello": {
+            "intent": "greetings.hello",
+            "domain": "default"
+          },
+          "hi": {
+            "intent": "greetings.hello",
+            "domain": "default"
+          },
+          "hey": {
+            "intent": "greetings.hello",
+            "domain": "default"
+          },
+          "greet": {
+            "intent": "greetings.hello",
+            "domain": "default"
+          },
+          "a,joke,me,tell": {
+            "intent": "commands.joke",
+            "domain": "default"
+          },
+          "a,i,joke,want": {
+            "intent": "commands.joke",
+            "domain": "default"
+          },
+          "a,joke,me,provid,with": {
+            "intent": "commands.joke",
+            "domain": "default"
+          },
+          "a,give,joke,me": {
+            "intent": "commands.joke",
+            "domain": "default"
+          },
+          "for,goodby,now": {
+            "intent": "greetings.bye",
+            "domain": "default"
+          },
+          "bye,care,take": {
+            "intent": "greetings.bye",
+            "domain": "default"
+          },
+          "later,see,you": {
+            "intent": "greetings.bye",
+            "domain": "default"
+          },
+          "bye,for,now": {
+            "intent": "greetings.bye",
+            "domain": "default"
+          },
+          "goodby": {
+            "intent": "greetings.bye",
+            "domain": "default"
+          },
+          "go,i,need,to": {
+            "intent": "greetings.bye",
+            "domain": "default"
+          },
+          "go,i,must": {
+            "intent": "greetings.bye",
+            "domain": "default"
+          }
+        },
+        "intentDict": {
+          "moods.angry": "default",
+          "moods.sad": "default",
+          "moods.remorseful": "default",
+          "greetings.hello": "default",
+          "commands.joke": "default",
+          "greetings.bye": "default"
+        },
+        "sentences": [
+          {
+            "domain": "default",
+            "utterance": "arrg",
+            "intent": "moods.angry"
+          },
+          {
+            "domain": "default",
+            "utterance": "no don't do that",
+            "intent": "moods.angry"
+          },
+          {
+            "domain": "default",
+            "utterance": "don't",
+            "intent": "moods.angry"
+          },
+          {
+            "domain": "default",
+            "utterance": "wasn't talking to you",
+            "intent": "moods.angry"
+          },
+          {
+            "domain": "default",
+            "utterance": "no no no",
+            "intent": "moods.angry"
+          },
+          {
+            "domain": "default",
+            "utterance": "don't do that",
+            "intent": "moods.angry"
+          },
+          {
+            "domain": "default",
+            "utterance": "i am angry",
+            "intent": "moods.angry"
+          },
+          {
+            "domain": "default",
+            "utterance": "that's wrong",
+            "intent": "moods.angry"
+          },
+          {
+            "domain": "default",
+            "utterance": "that's not right",
+            "intent": "moods.angry"
+          },
+          {
+            "domain": "default",
+            "utterance": "arrg no",
+            "intent": "moods.angry"
+          },
+          {
+            "domain": "default",
+            "utterance": "that's not what i meant",
+            "intent": "moods.angry"
+          },
+          {
+            "domain": "default",
+            "utterance": "i'm sad",
+            "intent": "moods.sad"
+          },
+          {
+            "domain": "default",
+            "utterance": "that's sad",
+            "intent": "moods.sad"
+          },
+          {
+            "domain": "default",
+            "utterance": "that' too bad",
+            "intent": "moods.sad"
+          },
+          {
+            "domain": "default",
+            "utterance": "i'm sorry",
+            "intent": "moods.remorseful"
+          },
+          {
+            "domain": "default",
+            "utterance": "it's my fault",
+            "intent": "moods.remorseful"
+          },
+          {
+            "domain": "default",
+            "utterance": "i'm sorry it's my fault",
+            "intent": "moods.remorseful"
+          },
+          {
+            "domain": "default",
+            "utterance": "i take responsibility",
+            "intent": "moods.remorseful"
+          },
+          {
+            "domain": "default",
+            "utterance": "i have caused wrong",
+            "intent": "moods.remorseful"
+          },
+          {
+            "domain": "default",
+            "utterance": "i have caused harm",
+            "intent": "moods.remorseful"
+          },
+          {
+            "domain": "default",
+            "utterance": "please forgive me",
+            "intent": "moods.remorseful"
+          },
+          {
+            "domain": "default",
+            "utterance": "forgive me for my wrongs",
+            "intent": "moods.remorseful"
+          },
+          {
+            "domain": "default",
+            "utterance": "hello",
+            "intent": "greetings.hello"
+          },
+          {
+            "domain": "default",
+            "utterance": "hi",
+            "intent": "greetings.hello"
+          },
+          {
+            "domain": "default",
+            "utterance": "hey",
+            "intent": "greetings.hello"
+          },
+          {
+            "domain": "default",
+            "utterance": "greetings",
+            "intent": "greetings.hello"
+          },
+          {
+            "domain": "default",
+            "utterance": "tell me a joke",
+            "intent": "commands.joke"
+          },
+          {
+            "domain": "default",
+            "utterance": "i want a joke",
+            "intent": "commands.joke"
+          },
+          {
+            "domain": "default",
+            "utterance": "provide me with a joke",
+            "intent": "commands.joke"
+          },
+          {
+            "domain": "default",
+            "utterance": "give me a joke",
+            "intent": "commands.joke"
+          },
+          {
+            "domain": "default",
+            "utterance": "goodbye for now",
+            "intent": "greetings.bye"
+          },
+          {
+            "domain": "default",
+            "utterance": "bye take care",
+            "intent": "greetings.bye"
+          },
+          {
+            "domain": "default",
+            "utterance": "see you later",
+            "intent": "greetings.bye"
+          },
+          {
+            "domain": "default",
+            "utterance": "bye for now",
+            "intent": "greetings.bye"
+          },
+          {
+            "domain": "default",
+            "utterance": "goodbye",
+            "intent": "greetings.bye"
+          },
+          {
+            "domain": "default",
+            "utterance": "i need to go",
+            "intent": "greetings.bye"
+          },
+          {
+            "domain": "default",
+            "utterance": "i must go",
+            "intent": "greetings.bye"
+          }
+        ],
+        "domains": {
+          "master_domain": {
+            "settings": {
+              "locale": "en",
+              "tag": "nlu-en",
+              "keepStopwords": true,
+              "nonefeatureValue": 1,
+              "nonedeltaMultiplier": 1.2,
+              "spellCheck": false,
+              "spellCheckDistance": 1,
+              "filterZeros": true,
+              "log": true
+            },
+            "features": {
+              "arrg": 1,
+              "no": 1,
+              "do": 1,
+              "not": 1,
+              "that": 1,
+              "was": 1,
+              "talk": 1,
+              "to": 1,
+              "you": 1,
+              "i": 1,
+              "am": 1,
+              "angri": 1,
+              "is": 1,
+              "wrong": 1,
+              "right": 1,
+              "what": 1,
+              "meant": 1,
+              "sad": 1,
+              "too": 1,
+              "bad": 1,
+              "sorri": 1,
+              "it": 1,
+              "my": 1,
+              "fault": 1,
+              "take": 1,
+              "respons": 1,
+              "have": 1,
+              "caus": 1,
+              "harm": 1,
+              "pleas": 1,
+              "forgiv": 1,
+              "me": 1,
+              "for": 1,
+              "hello": 1,
+              "hi": 1,
+              "hey": 1,
+              "greet": 1,
+              "tell": 1,
+              "a": 1,
+              "joke": 1,
+              "want": 1,
+              "provid": 1,
+              "with": 1,
+              "give": 1,
+              "goodby": 1,
+              "now": 1,
+              "bye": 1,
+              "care": 1,
+              "see": 1,
+              "later": 1,
+              "need": 1,
+              "go": 1,
+              "must": 1
+            },
+            "intents": {
+              "moods.angry": 1,
+              "moods.sad": 1,
+              "moods.remorseful": 1,
+              "greetings.hello": 1,
+              "commands.joke": 1,
+              "greetings.bye": 1
+            },
+            "intentFeatures": {
+              "moods.angry": {
+                "arrg": 1,
+                "no": 1,
+                "do": 1,
+                "not": 1,
+                "that": 1,
+                "was": 1,
+                "talk": 1,
+                "to": 1,
+                "you": 1,
+                "i": 1,
+                "am": 1,
+                "angri": 1,
+                "is": 1,
+                "wrong": 1,
+                "right": 1,
+                "what": 1,
+                "meant": 1
+              },
+              "moods.sad": {
+                "i": 1,
+                "am": 1,
+                "sad": 1,
+                "that": 1,
+                "is": 1,
+                "too": 1,
+                "bad": 1
+              },
+              "moods.remorseful": {
+                "i": 1,
+                "am": 1,
+                "sorri": 1,
+                "it": 1,
+                "is": 1,
+                "my": 1,
+                "fault": 1,
+                "take": 1,
+                "respons": 1,
+                "have": 1,
+                "caus": 1,
+                "wrong": 1,
+                "harm": 1,
+                "pleas": 1,
+                "forgiv": 1,
+                "me": 1,
+                "for": 1
+              },
+              "greetings.hello": {
+                "hello": 1,
+                "hi": 1,
+                "hey": 1,
+                "greet": 1
+              },
+              "commands.joke": {
+                "tell": 1,
+                "me": 1,
+                "a": 1,
+                "joke": 1,
+                "i": 1,
+                "want": 1,
+                "provid": 1,
+                "with": 1,
+                "give": 1
+              },
+              "greetings.bye": {
+                "goodby": 1,
+                "for": 1,
+                "now": 1,
+                "bye": 1,
+                "take": 1,
+                "care": 1,
+                "see": 1,
+                "you": 1,
+                "later": 1,
+                "i": 1,
+                "need": 1,
+                "to": 1,
+                "go": 1,
+                "must": 1
+              }
+            },
+            "featuresToIntent": {
+              "arrg": [
+                "moods.angry"
+              ],
+              "no": [
+                "moods.angry"
+              ],
+              "do": [
+                "moods.angry"
+              ],
+              "not": [
+                "moods.angry"
+              ],
+              "that": [
+                "moods.angry",
+                "moods.sad"
+              ],
+              "was": [
+                "moods.angry"
+              ],
+              "talk": [
+                "moods.angry"
+              ],
+              "to": [
+                "moods.angry",
+                "greetings.bye"
+              ],
+              "you": [
+                "moods.angry",
+                "greetings.bye"
+              ],
+              "i": [
+                "moods.angry",
+                "moods.sad",
+                "moods.remorseful",
+                "commands.joke",
+                "greetings.bye"
+              ],
+              "am": [
+                "moods.angry",
+                "moods.sad",
+                "moods.remorseful"
+              ],
+              "angri": [
+                "moods.angry"
+              ],
+              "is": [
+                "moods.angry",
+                "moods.sad",
+                "moods.remorseful"
+              ],
+              "wrong": [
+                "moods.angry",
+                "moods.remorseful"
+              ],
+              "right": [
+                "moods.angry"
+              ],
+              "what": [
+                "moods.angry"
+              ],
+              "meant": [
+                "moods.angry"
+              ],
+              "sad": [
+                "moods.sad"
+              ],
+              "too": [
+                "moods.sad"
+              ],
+              "bad": [
+                "moods.sad"
+              ],
+              "sorri": [
+                "moods.remorseful"
+              ],
+              "it": [
+                "moods.remorseful"
+              ],
+              "my": [
+                "moods.remorseful"
+              ],
+              "fault": [
+                "moods.remorseful"
+              ],
+              "take": [
+                "moods.remorseful",
+                "greetings.bye"
+              ],
+              "respons": [
+                "moods.remorseful"
+              ],
+              "have": [
+                "moods.remorseful"
+              ],
+              "caus": [
+                "moods.remorseful"
+              ],
+              "harm": [
+                "moods.remorseful"
+              ],
+              "pleas": [
+                "moods.remorseful"
+              ],
+              "forgiv": [
+                "moods.remorseful"
+              ],
+              "me": [
+                "moods.remorseful",
+                "commands.joke"
+              ],
+              "for": [
+                "moods.remorseful",
+                "greetings.bye"
+              ],
+              "hello": [
+                "greetings.hello"
+              ],
+              "hi": [
+                "greetings.hello"
+              ],
+              "hey": [
+                "greetings.hello"
+              ],
+              "greet": [
+                "greetings.hello"
+              ],
+              "tell": [
+                "commands.joke"
+              ],
+              "a": [
+                "commands.joke"
+              ],
+              "joke": [
+                "commands.joke"
+              ],
+              "want": [
+                "commands.joke"
+              ],
+              "provid": [
+                "commands.joke"
+              ],
+              "with": [
+                "commands.joke"
+              ],
+              "give": [
+                "commands.joke"
+              ],
+              "goodby": [
+                "greetings.bye"
+              ],
+              "now": [
+                "greetings.bye"
+              ],
+              "bye": [
+                "greetings.bye"
+              ],
+              "care": [
+                "greetings.bye"
+              ],
+              "see": [
+                "greetings.bye"
+              ],
+              "later": [
+                "greetings.bye"
+              ],
+              "need": [
+                "greetings.bye"
+              ],
+              "go": [
+                "greetings.bye"
+              ],
+              "must": [
+                "greetings.bye"
+              ]
+            },
+            "neuralNetwork": {
+              "settings": {
+                "locale": "en",
+                "tag": "nlu-en",
+                "keepStopwords": true,
+                "nonefeatureValue": 1,
+                "nonedeltaMultiplier": 1.2,
+                "spellCheck": false,
+                "spellCheckDistance": 1,
+                "filterZeros": true,
+                "log": true
+              },
+              "features": [
+                "arrg",
+                "no",
+                "do",
+                "not",
+                "that",
+                "was",
+                "talk",
+                "to",
+                "you",
+                "i",
+                "am",
+                "angri",
+                "is",
+                "wrong",
+                "right",
+                "what",
+                "meant",
+                "sad",
+                "too",
+                "bad",
+                "sorri",
+                "it",
+                "my",
+                "fault",
+                "take",
+                "respons",
+                "have",
+                "caus",
+                "harm",
+                "pleas",
+                "forgiv",
+                "me",
+                "for",
+                "hello",
+                "hi",
+                "hey",
+                "greet",
+                "tell",
+                "a",
+                "joke",
+                "want",
+                "provid",
+                "with",
+                "give",
+                "goodby",
+                "now",
+                "bye",
+                "care",
+                "see",
+                "later",
+                "need",
+                "go",
+                "must",
+                "nonefeature"
+              ],
+              "intents": [
+                "moods.angry",
+                "moods.sad",
+                "moods.remorseful",
+                "greetings.hello",
+                "commands.joke",
+                "greetings.bye",
+                "None"
+              ],
+              "perceptrons": [
+                [
+                  2.220046281814575,
+                  1.5318474769592285,
+                  -0.4827786386013031,
+                  3.779036283493042,
+                  -1.1739197969436646,
+                  1.244236707687378,
+                  1.244236707687378,
+                  -0.31074678897857666,
+                  -2.931473731994629,
+                  -6.0305047035217285,
+                  0.726737380027771,
+                  8.243120193481445,
+                  0.34597089886665344,
+                  3.8145031929016113,
+                  -0.0013970313593745232,
+                  3.005065679550171,
+                  3.005065679550171,
+                  -10.453803062438965,
+                  -5.04442834854126,
+                  -5.04442834854126,
+                  -6.010730266571045,
+                  -3.374782085418701,
+                  -4.9213080406188965,
+                  -3.374782085418701,
+                  -3.9479637145996094,
+                  -1.338801383972168,
+                  -4.602639198303223,
+                  -4.602639198303223,
+                  -0.2330842912197113,
+                  -2.062854766845703,
+                  -3.6093788146972656,
+                  -5.63126277923584,
+                  -4.0463433265686035,
+                  -11.217395782470703,
+                  -11.214033126831055,
+                  -11.210661888122559,
+                  -11.207286834716797,
+                  -0.8090189695358276,
+                  -2.4346935749053955,
+                  -2.4346935749053955,
+                  -0.4141879379749298,
+                  -0.40544286370277405,
+                  -0.40544286370277405,
+                  -0.8050172328948975,
+                  -11.200570106506348,
+                  -2.499819278717041,
+                  -4.739615440368652,
+                  -2.6081669330596924,
+                  -4.1748809814453125,
+                  -4.1748809814453125,
+                  -1.5546642541885376,
+                  -3.4060068130493164,
+                  -1.8505710363388062,
+                  -11.196247100830078,
+                  11.302918183391924
+                ],
+                [
+                  -0.33411288261413574,
+                  -0.5849548578262329,
+                  -1.3322440385818481,
+                  -2.911041498184204,
+                  3.5490028858184814,
+                  -0.008884649723768234,
+                  -0.008884649723768234,
+                  -0.20202136039733887,
+                  -0.2074800729751587,
+                  0.22278748452663422,
+                  2.187861442565918,
+                  -2.6422173976898193,
+                  -1.1383497714996338,
+                  -3.21724009513855,
+                  -0.9561020731925964,
+                  -0.5676993131637573,
+                  -0.5676993131637573,
+                  11.643491744995117,
+                  5.252570152282715,
+                  5.252570152282715,
+                  -2.6422173976898193,
+                  -0.7197713851928711,
+                  -0.7680677771568298,
+                  -0.7197713851928711,
+                  -0.47052809596061707,
+                  -0.3386632800102234,
+                  -0.3807089924812317,
+                  -0.3807089924812317,
+                  -0.20081207156181335,
+                  -0.17372800409793854,
+                  -0.22125671803951263,
+                  -0.3879057765007019,
+                  -0.2637530267238617,
+                  -0.4013523757457733,
+                  -0.39568787813186646,
+                  -0.38539665937423706,
+                  -0.375322163105011,
+                  -0.054730892181396484,
+                  -0.3250017762184143,
+                  -0.3250017762184143,
+                  -0.16178646683692932,
+                  -0.032502397894859314,
+                  -0.032502397894859314,
+                  -0.022180959582328796,
+                  -0.39898908138275146,
+                  -0.21599367260932922,
+                  -0.20514622330665588,
+                  -0.10527677088975906,
+                  -0.18960754573345184,
+                  -0.18960754573345184,
+                  -0.1844126433134079,
+                  -0.42098844051361084,
+                  -0.21378149092197418,
+                  -0.34402966499328613,
+                  0.2315702298586796
+                ],
+                [
+                  -8.902087211608887,
+                  -8.89583969116211,
+                  -3.9606781005859375,
+                  -5.010655879974365,
+                  -6.253256320953369,
+                  -0.031210171058773994,
+                  -0.031210171058773994,
+                  -1.6358942985534668,
+                  -3.0479161739349365,
+                  -1.0692285299301147,
+                  -2.8315324783325195,
+                  -5.109445571899414,
+                  -2.960740327835083,
+                  0.2138165384531021,
+                  -0.1347244828939438,
+                  -0.6805510520935059,
+                  -0.6805510520935059,
+                  -5.090883731842041,
+                  -1.3717461824417114,
+                  -1.3717461824417114,
+                  7.290970325469971,
+                  1.760028600692749,
+                  2.811798334121704,
+                  1.760028600692749,
+                  1.026883602142334,
+                  5.231398105621338,
+                  3.0229735374450684,
+                  3.0229735374450684,
+                  0.24034534394741058,
+                  2.0534496307373047,
+                  3.1233158111572266,
+                  0.07145500183105469,
+                  -1.0441755056381226,
+                  -8.940462112426758,
+                  -8.936322212219238,
+                  -8.932178497314453,
+                  -8.928030014038086,
+                  -1.2209068536758423,
+                  -3.951699733734131,
+                  -3.951699733734131,
+                  -0.8390101790428162,
+                  -0.612583577632904,
+                  -0.612583577632904,
+                  -1.216882348060608,
+                  -8.91950511932373,
+                  -2.1152901649475098,
+                  -5.860245227813721,
+                  -4.203564167022705,
+                  -2.9854958057403564,
+                  -2.9854958057403564,
+                  -1.5734738111495972,
+                  -4.769340991973877,
+                  -3.195075273513794,
+                  -8.914409637451172,
+                  9.046743100296684
+                ],
+                [
+                  -4.434268951416016,
+                  -4.434268951416016,
+                  -2.0623927116394043,
+                  -2.371877670288086,
+                  -2.244009494781494,
+                  -0.22388647496700287,
+                  -0.22388647496700287,
+                  -0.6055765748023987,
+                  -1.658300518989563,
+                  -2.958430051803589,
+                  -1.062294602394104,
+                  -0.4413083791732788,
+                  -1.7210298776626587,
+                  -0.5592213273048401,
+                  -0.05433737114071846,
+                  0,
+                  0,
+                  -0.5123972296714783,
+                  -1.0951308012008667,
+                  -1.0951308012008667,
+                  -0.4135468900203705,
+                  -0.9017876982688904,
+                  -0.9096661806106567,
+                  -0.9017876982688904,
+                  -1.3752118349075317,
+                  -0.10062980651855469,
+                  -0.5292032361030579,
+                  -0.5292032361030579,
+                  -0.4174349904060364,
+                  -1.152938961982727,
+                  -1.1608175039291382,
+                  -2.120514392852783,
+                  -1.3170459270477295,
+                  9.8514404296875,
+                  9.851439476013184,
+                  9.851438522338867,
+                  9.85143756866455,
+                  -0.4150625169277191,
+                  -1.2086831331253052,
+                  -1.2086831331253052,
+                  -0.2017122507095337,
+                  -0.22244741022586823,
+                  -0.22244741022586823,
+                  -0.2749200165271759,
+                  -4.434271335601807,
+                  -1.3091676235198975,
+                  -1.8657405376434326,
+                  -1.27292799949646,
+                  -1.4175292253494263,
+                  -1.4175292253494263,
+                  -0.3485490679740906,
+                  -1.0044469833374023,
+                  -0.6286464929580688,
+                  -4.434267520904541,
+                  4.434271996662901
+                ],
+                [
+                  -0.23787593841552734,
+                  -0.2767266631126404,
+                  -0.1939525008201599,
+                  -0.3936852514743805,
+                  -0.3699823319911957,
+                  -0.029208648949861526,
+                  -0.029208648949861526,
+                  -0.26577621698379517,
+                  -0.2156311422586441,
+                  0.648262619972229,
+                  -0.5964525938034058,
+                  -0.1924811452627182,
+                  -0.28121164441108704,
+                  -0.5110831260681152,
+                  -0.015365343540906906,
+                  -0.07215705513954163,
+                  -0.07215705513954163,
+                  -0.1697952002286911,
+                  -0.03182036802172661,
+                  -0.03182036802172661,
+                  -0.16316545009613037,
+                  -0.0679689273238182,
+                  -0.40614452958106995,
+                  -0.0679689273238182,
+                  -0.46516451239585876,
+                  -0.28050321340560913,
+                  -0.2902851998806,
+                  -0.2902851998806,
+                  -0.16578204929828644,
+                  -0.8121898174285889,
+                  -1.1799067258834839,
+                  1.8844072818756104,
+                  -0.6097623109817505,
+                  -0.09791527688503265,
+                  -0.09724520146846771,
+                  -0.09703092277050018,
+                  -0.09700757265090942,
+                  1.229001522064209,
+                  5.537648677825928,
+                  5.537648677825928,
+                  2.465146541595459,
+                  0.6145009994506836,
+                  0.6145009994506836,
+                  1.2290027141571045,
+                  -0.3203563988208771,
+                  -0.2513570189476013,
+                  -0.2581310570240021,
+                  -0.12357312440872192,
+                  -0.15703310072422028,
+                  -0.15703310072422028,
+                  -0.20491008460521698,
+                  -0.5095179080963135,
+                  -0.25154736638069153,
+                  -0.20369382202625275,
+                  0.09700762115102822
+                ],
+                [
+                  -2.5785317420959473,
+                  -2.5785250663757324,
+                  -0.8292504549026489,
+                  -2.9818527698516846,
+                  -1.5759003162384033,
+                  -1.792035698890686,
+                  -1.792035698890686,
+                  1.2800403833389282,
+                  2.7066354751586914,
+                  -0.07417357712984085,
+                  -2.2330737113952637,
+                  -0.7435247302055359,
+                  -1.0104081630706787,
+                  -1.503821611404419,
+                  -0.041095979511737823,
+                  -0.14814640581607819,
+                  -0.14814640581607819,
+                  -0.7548370361328125,
+                  -0.5013791918754578,
+                  -0.5013791918754578,
+                  -0.6683213710784912,
+                  -0.3515380918979645,
+                  -1.1851191520690918,
+                  -0.3515380918979645,
+                  -1.6394883394241333,
+                  -3.2843379974365234,
+                  -1.0096633434295654,
+                  -1.0096633434295654,
+                  -0.5402870178222656,
+                  -0.32900455594062805,
+                  -1.1523306369781494,
+                  -1.3622565269470215,
+                  -0.4145541787147522,
+                  -2.5785162448883057,
+                  -2.5785093307495117,
+                  -2.5785024166107178,
+                  -2.578495502471924,
+                  -0.1023474931716919,
+                  -0.9043305516242981,
+                  -0.9043305516242981,
+                  -0.695826530456543,
+                  -0.03652269020676613,
+                  -0.03652269020676613,
+                  -0.019435536116361618,
+                  11.70369815826416,
+                  0.4208308756351471,
+                  11.698638916015625,
+                  1.648850679397583,
+                  4.500280857086182,
+                  4.500280857086182,
+                  3.07368540763855,
+                  7.427436351776123,
+                  4.353748798370361,
+                  -2.5785484313964844,
+                  2.578726481294341
+                ],
+                [
+                  -1.1100232601165771,
+                  -1.1099662780761719,
+                  -0.4882674813270569,
+                  -0.6369794011116028,
+                  -0.5869966149330139,
+                  -0.1125413030385971,
+                  -0.1125413030385971,
+                  -0.14383816719055176,
+                  -0.4499504864215851,
+                  -0.773593008518219,
+                  -0.3096003532409668,
+                  -0.12790903449058533,
+                  -0.43364328145980835,
+                  -0.18505002558231354,
+                  -0.01522169541567564,
+                  -0.004091108683496714,
+                  -0.004091108683496714,
+                  -0.16026902198791504,
+                  -0.2676193416118622,
+                  -0.2676193416118622,
+                  -0.09483058005571365,
+                  -0.21770751476287842,
+                  -0.2533414959907532,
+                  -0.21770751476287842,
+                  -0.390866219997406,
+                  -0.11318136751651764,
+                  -0.14853933453559875,
+                  -0.14853933453559875,
+                  -0.10382689535617828,
+                  -0.2779490649700165,
+                  -0.3135831654071808,
+                  -0.5440022945404053,
+                  -0.35039791464805603,
+                  -1.1099495887756348,
+                  -1.1099494695663452,
+                  -1.1099494695663452,
+                  -1.1099494695663452,
+                  -0.09170964360237122,
+                  -0.2383936643600464,
+                  -0.2383936643600464,
+                  -0.005990891717374325,
+                  -0.04769470542669296,
+                  -0.04769470542669296,
+                  -0.08916058391332626,
+                  -1.1099494695663452,
+                  -0.31476396322250366,
+                  -0.4447881579399109,
+                  -0.2742956876754761,
+                  -0.32999980449676514,
+                  -0.32999980449676514,
+                  -0.023887936025857925,
+                  -0.1803409606218338,
+                  -0.15601615607738495,
+                  13.175759315490723,
+                  1.1099503504612958
+                ]
+              ]
+            }
+          }
+        }
+      }
+    },
+    "intentDomains": {},
+    "extraSentences": [
+      [
+        "en",
+        "arrg"
+      ],
+      [
+        "en",
+        "no don't do that"
+      ],
+      [
+        "en",
+        "don't"
+      ],
+      [
+        "en",
+        "wasn't talking to you"
+      ],
+      [
+        "en",
+        "no no no"
+      ],
+      [
+        "en",
+        "don't do that"
+      ],
+      [
+        "en",
+        "i am angry"
+      ],
+      [
+        "en",
+        "that's wrong"
+      ],
+      [
+        "en",
+        "that's not right"
+      ],
+      [
+        "en",
+        "arrg no"
+      ],
+      [
+        "en",
+        "that's not what i meant"
+      ],
+      [
+        "en",
+        "i'm sad"
+      ],
+      [
+        "en",
+        "that's sad"
+      ],
+      [
+        "en",
+        "that' too bad"
+      ],
+      [
+        "en",
+        "i'm sorry"
+      ],
+      [
+        "en",
+        "it's my fault"
+      ],
+      [
+        "en",
+        "i'm sorry it's my fault"
+      ],
+      [
+        "en",
+        "i take responsibility"
+      ],
+      [
+        "en",
+        "i have caused wrong"
+      ],
+      [
+        "en",
+        "i have caused harm"
+      ],
+      [
+        "en",
+        "please forgive me"
+      ],
+      [
+        "en",
+        "forgive me for my wrongs"
+      ],
+      [
+        "en",
+        "hello"
+      ],
+      [
+        "en",
+        "hi"
+      ],
+      [
+        "en",
+        "hey"
+      ],
+      [
+        "en",
+        "greetings"
+      ],
+      [
+        "en",
+        "tell me a joke"
+      ],
+      [
+        "en",
+        "i want a joke"
+      ],
+      [
+        "en",
+        "provide me with a joke"
+      ],
+      [
+        "en",
+        "give me a joke"
+      ],
+      [
+        "en",
+        "goodbye for now"
+      ],
+      [
+        "en",
+        "bye take care"
+      ],
+      [
+        "en",
+        "see you later"
+      ],
+      [
+        "en",
+        "bye for now"
+      ],
+      [
+        "en",
+        "goodbye"
+      ],
+      [
+        "en",
+        "i need to go"
+      ],
+      [
+        "en",
+        "i must go"
+      ]
+    ]
+  },
+  "ner": {
+    "settings": {
+      "tag": "ner",
+      "entityPreffix": "%",
+      "entitySuffix": "%"
+    },
+    "rules": {}
+  },
+  "nlgManager": {
+    "settings": {
+      "tag": "nlg-manager"
+    },
+    "responses": {
+      "en": {
+        "greetings.bye": [
+          {
+            "answer": "Bye!"
+          },
+          {
+            "answer": "Goodbye!"
+          },
+          {
+            "answer": "Farewell!"
+          }
+        ],
+        "greetings.hello": [
+          {
+            "answer": "Hello!"
+          },
+          {
+            "answer": "Hi!"
+          },
+          {
+            "answer": "Greetings!"
+          }
+        ],
+        "moods.angry": [
+          {
+            "answer": "Oh no, I'm sorry! :frowning:"
+          },
+          {
+            "answer": "Sorry! :worried:"
+          },
+          {
+            "answer": "I'm sorry, I'm just a lonely bot! :slight_frown:"
+          }
+        ],
+        "moods.sad": [
+          {
+            "answer": "It could be worse - you could be an emotionless bot like me!"
+          }
+        ],
+        "moods.remourseful": [
+          {
+            "answer": "It's okay... I don' have feelings like you humans"
+          },
+          {
+            "answer": "Cheer up! :heart: from your emotionless bot"
+          }
+        ],
+        "commands.joke": [
+          {
+            "answer": "~JOKE"
+          }
+        ]
+      }
+    }
+  },
+  "actionManager": {
+    "settings": {
+      "tag": "action-manager"
+    },
+    "actions": {}
+  },
+  "slotManager": {}
+}
