@@ -1,6 +1,6 @@
 //Print out the help page for the bot
 
-const run = (msg) => {
+const help = (msg) => {
     msg.channel.send("Available commands:\n\
             `hi`\t\t\t\t\tGreetings from the bot\n\
             `say`\t\t\t\t\tRepeat and delete the message\n\
@@ -21,5 +21,5 @@ const run = (msg) => {
 }
 
 module.exports.help = {
-    run
+    run: help
 }
