@@ -30,7 +30,7 @@ bot.on('ready', () => {
     }, 600000);
     bot.user.setPresence({
         status: "online",
-        game: {
+        activity: {
             name: process.env.BOT_STATUS || "Loading...",
             type: process.env.BOT_STATUS_TYPE || "PLAYING"
         }
