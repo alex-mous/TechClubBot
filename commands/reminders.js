@@ -19,14 +19,16 @@ let checkReminders = async (bot, nextMeetings) => {
     nextMeetings.forEach((meeting) => {
         let meetingDate = new Date(`${meeting["Year"]}-${meeting["Month"]}-${meeting["Day"]} ${meeting["Time Start"]}`);
         let meetingStr = `Meeting from ${meeting["Time Start"]} to ${meeting["Time End"]} and is type ${meeting["Meeting Type"]}`;
-        if (meetingDate-date > 85500000 && meetingDate-date < 86400000) { //23:15 to 24 hours before meeting
+        let hours = ((meetingDate-date)/(60*60*1000));
+        console.log("Checking meetings... Next meeting (" + meetingStr + ") in " + hours + " hours");
+        if (hours >= 23.75 && hours <= 24) { //23:15 to 24 hours before meeting
             console.log("INFO: meeting in 24 hours. Sending out reminders");
             let reminderLevel = meeting["Meeting Type"] == "L" ? 3 : 2;
             sendReminders(bot, reminderLevel, "about 24 hours", meetingStr);
-        } else if (meetingDate-date > 1800000 && meetingDate-date < 2700000) { //0:30 to 0:45 hours before meeting
-            console.log("INFO: meeting in 30-45 minutes hours. Sending out reminders");
+        } else if (hours > 0.25 && hours < 0.5) { //0:15 to 0:30 hours before meeting
+            console.log("INFO: meeting in 15-30 minutes hours. Sending out reminders");
             let reminderLevel = meeting["Meeting Type"] == "L" ? 3 : 1;
-            sendReminders(bot, reminderLevel, "about 30 minutes");
+            sendReminders(bot, reminderLevel, "about 15-30 minutes");
         }
     });
 }
