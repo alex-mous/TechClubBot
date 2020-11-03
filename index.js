@@ -29,10 +29,10 @@ bot.on('ready', () => {
         })
     }, 600000);
     bot.user.setPresence({
-        status: "idle",  //You can show online, idle....
+        status: "online",
         game: {
-            name: process.env.BOT_STATUS || "Loading...",  //The message shown
-            type: process.env.BOT_STATUS_TYPE || "PLAYING" //PLAYING: WATCHING: LISTENING: STREAMING:
+            name: process.env.BOT_STATUS || "Loading...",
+            type: process.env.BOT_STATUS_TYPE || "PLAYING"
         }
     });
     console.log("INFO: bot ready");
