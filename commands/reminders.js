@@ -28,7 +28,7 @@ let checkReminders = async (bot, nextMeetings) => {
         } else if (hours > 0.25 && hours < 0.5) { //0:15 to 0:30 hours before meeting
             console.log("INFO: meeting in 15-30 minutes hours. Sending out reminders");
             let reminderLevel = meeting["Meeting Type"] == "L" ? 3 : 1;
-            sendReminders(bot, reminderLevel, "about 15-30 minutes");
+            sendReminders(bot, reminderLevel, "about 15-30 minutes", meetingStr);
         }
     });
 }
