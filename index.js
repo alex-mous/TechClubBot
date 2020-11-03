@@ -28,6 +28,13 @@ bot.on('ready', () => {
             commands.reminderFunctions.checkReminders(bot, meetings);
         })
     }, 600000);
+    bot.user.setPresence({
+        status: "idle",  //You can show online, idle....
+        game: {
+            name: process.env.BOT_STATUS || "Loading...",  //The message shown
+            type: process.env.BOT_STATUS_TYPE || "PLAYING" //PLAYING: WATCHING: LISTENING: STREAMING:
+        }
+    });
     console.log("INFO: bot ready");
 });
 
