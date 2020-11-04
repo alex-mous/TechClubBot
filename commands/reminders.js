@@ -17,7 +17,7 @@ reminders.setSpreadsheet(googleAuth.GOOGLE_SHEET_ID).then(() => reminders.setShe
 let checkReminders = async (bot, nextMeetings) => { 
     let date = new Date();
     nextMeetings.forEach((meeting) => {
-        let meetingDate = new Date(`${meeting["Year"]}-${meeting["Month"]}-${meeting["Day"]} ${meeting["Time Start"]}`);
+        let meetingDate = new Date(`${meeting["Year"]}-${meeting["Month"]}-${meeting["Day"]} ${meeting["Time Start"]} -8:00`); //PST timezone
         let meetingStr = `Meeting from ${meeting["Time Start"]} to ${meeting["Time End"]} and is type ${meeting["Meeting Type"]}`;
         let hours = ((meetingDate-date)/(60*60*1000));
         console.log("Checking meetings... Next meeting (" + meetingStr + ") in " + hours + " hours");
