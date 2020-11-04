@@ -59,7 +59,7 @@ bot.on("message", (msg) => {
     if (botMode == "regular") { //Regular mode
         if (cmd) {
             runCommand(cmd, msg);
-        } else if (msg.author.id != bot.user.id && (msg.mentions.has(bot.user) || msg.guild == null)) { //Handle instances of bot mentions or DMs
+        } else if (msg.author.id != bot.user.id && !msg.mentions.everyone && (msg.mentions.has(bot.user) || msg.guild == null)) { //Handle instances of bot mentions or DMs
             botReply(msg);
         } else if ((msgContentList.includes("hello") || msgContentList.includes("hi") || msgContentList.includes("hey")) && msg.author.username !== "TechClubBot" && msgContentList.length <= 5) { //Run the say hi function
             runCommand({command: "hi", params: msg.content.split(" ").slice(1)}, msg);
