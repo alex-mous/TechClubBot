@@ -23,11 +23,11 @@ let botMode = "regular"; //The bot's current mode
  * Event handler for startup of Bot
  */
 bot.on('ready', () => {
-    setInterval(() => { //Run functions that need periodic checking every 10 minutes
+    setInterval(() => { //Run functions that need periodic checking
         commands.schedulingFunctions.getMeetings().then((meetings) => { //Get the meetings and check if any reminders need to be sent from them
             commands.reminderFunctions.checkReminders(bot, meetings);
         })
-    }, 600000);
+    }, 14.5*60*1000); //14.5 minutes in ms
     bot.user.setPresence({
         status: "online",
         activity: {
