@@ -47,6 +47,25 @@ bot.on("guildMemberAdd", (member) => {
     member.guild.channels.cache.find((ch) => {
         return ch.name == "welcome"
     }).send(`Welcome to the server, ${name}!`);
+    //Send welcome message
+    member.user.send("**Welcome to the BC Tech Club, " + name + "!**\n\
+The Tech Club's purpose is to introduce and improve members' skills in CS/IT/Robotics/Electronics.\n\
+\n\
+**Meetings**\n\
+-  Meetings occur weekly alternating on Tuesdays/Thursdays. Please send \"!calendar\" to view the meeting calendar and/or use \"!changereminders 2\" to sign up for meeting reminders.\
+\n\
+**Projects**\n\
+-  The club runs club projects to further members' skills. Please DM a member of Leadership if you would like to join a project or want to know the current project.\
+\n\
+**Rules**\n\
+-  Be respectful to the other members!\n\
+-  No swearing in the server\n\
+-  Don't use the server or channels for the purpose of harm to others\n\
+-  Repeated violation of these rules will result in a suspension or ban at the leadership's digression.\n\
+\n\
+**Bot Commands**\n\
+-  You can run commands either in this chat or in the server's channels\n\
+-  Use \"!help\" to view the available commands");
     console.log("INFO: new user added!");
 });
 
