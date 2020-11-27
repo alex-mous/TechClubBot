@@ -7,7 +7,7 @@ const help = (msg) => {
             `status`\t\t\t\t\tMy status\n\
             `help`\t\t\t\t\tThis help!\n\
             `getminutes MEETING_#`\t\t\t\t\tGet the meeting minutes (meeting # is the number of meeting prior to the last meeting [e.g. 1 => meeting before last meeting]. No number or 0 for previous meeting)\n\
-            `calendar`\t\t\t\t\tPrint out the meeting calendar and list\n\
+            `calendar MONTH_#`\t\t\t\t\tPrint out the meeting calendar and list for the month number (no month -> current month)\n\
             `changereminders ANNOYANCE_LEVEL`\t\t\t\t\tSet your annoyance level for DM meeting reminders (0 to 2 for 0 to 2 reminders before each general meeting, 3 for all reminders for general and leadership) \n\n\
             **Leadership Only**\n\
             `vote`\t\t\t\t\tCreate a vote/poll of the channel\n\

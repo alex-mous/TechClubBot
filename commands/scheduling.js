@@ -85,11 +85,24 @@ const removeMeeting = (msg) => {
  * 
  * @function showMeetingCalendar
  * @param {Object} msg Message
+ * @param {Object} params Parameters
  */
-const showMeetingCalendar = async (msg) => {
+const showMeetingCalendar = async (msg, params) => {
+    let date = new Date(); //Today's date
+    let monthNo = date.getMonth(); //Number of the month (ex. 0 for January)
+    if (params.length > 0) {
+        let no =  parseInt(params[0]);
+        if (!isNaN(no) && no >= 1 && no <= 12) {
+            monthNo = no-1; //Set month number to the one that the user specified
+            date.setMonth(monthNo);
+        } else {
+            msg.reply("Please specify a month number between 1 and 12");
+        }
+    }
+
     let weeks = "";
     let meetings = ["", ""]; //General and leadership meeting strings
-    let mtgs = await getMeetings();
+    let mtgs = await getMeetings(monthNo);
     if (mtgs) {
         meetings = [mtgs.filter((mtg) => mtg["Meeting Type"] == "G"), mtgs.filter((mtg) => mtg["Meeting Type"] == "L")];
         meetings = meetings.map((meeting) => {
@@ -118,12 +131,11 @@ const showMeetingCalendar = async (msg) => {
         }
     })
 
-    let date = new Date(); //Today's date
-    let last = new Date(date.getFullYear(), date.getMonth()+1, 0).getDate(); //Last day of month
+    let last = new Date(date.getFullYear(), monthNo+1, 0).getDate(); //Last day of month
     let day = 1; //Day counter
     for (let w=0; w<5; w++) { //Weeks in month
         for (let i=0; i<7; i++) { //Days in week
-            let curr = new Date(date.getFullYear(), date.getMonth(), day); //Get current day from day counter
+            let curr = new Date(date.getFullYear(), monthNo, day); //Get current day from day counter
             if (i == curr.getDay() && (day <= last)) { //If it's actually in the month, add it
                 if (mtgsReversed[day]) {
                     weeks += "║ " + mtgsReversed[day]["Meeting Type"] + " ";
@@ -161,12 +173,13 @@ Day\tStart Time\t  End Time\n" + meetings[1] + "\
  * Get all upcoming meetings
  * 
  * @async
+ * @param {number} monthNo Month number to get
  * @returns {Array<Object>} Array of meeting objects
  */
-const getMeetings = async () => {
+const getMeetings = async (monthNo) => {
     let date = new Date(); //Date placeholder
     let mtgs = await (calendarSheet.getRows(2, await calendarSheet.getLastRowIndex()));
-    mtgs = mtgs.filter((mtg) => mtg["Month"] == date.getMonth()+1 && mtg["Year"] == date.getFullYear()); //Filter for only meetings in this month and year
+    mtgs = mtgs.filter((mtg) => mtg["Month"] == monthNo+1 && mtg["Year"] == date.getFullYear()); //Filter for only meetings in this month and year
     mtgs = mtgs.sort((prev, curr) => { //Sort the meetings so that they are in order of day
         return prev["Day"] - curr["Day"];
     });

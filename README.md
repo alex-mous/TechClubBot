@@ -20,7 +20,7 @@ Access the follow bot help page with !help. All voting commands, as well as thos
 | `status`       | My status                                                   |
 | `help`         | Show the help                                               |
 | `getminutes MEETING_#`    | Get the meeting minutes (meeting # is the number of meeting prior to the last meeting [e.g. 1 => meeting before last meeting]. No number or 0 for previous meeting) |
-| `calendar` | Print out the meeting calendar and list |
+| `calendar MONTH_#` | Print out the meeting calendar and list  for the month number (no month -> current month) |
 | *Leadership Only*  | Commands below can be run by users with the role Leadership only |
 | `vote`         | Create a vote/poll of the channel (enter Voting Mode)       |
 | `selfdestruct` | Self destruct the channel                                   |
