@@ -24,14 +24,28 @@ let botMode = "regular"; //The bot's current mode
  */
 bot.on('ready', () => {
     setInterval(() => { //Run functions that need periodic checking
-        commands.schedulingFunctions.getMeetings().then((meetings) => { //Get the meetings and check if any reminders need to be sent from them
-            commands.reminderFunctions.checkReminders(bot, meetings);
-        })
+        let date = new Date();
+        commands.schedulingFunctions.getMeetings(date.getMonth()).then((meetings) => { //Get this month's meetings
+             commands.schedulingFunctions.getMeetings(date.getMonth()+1).then((meetings2) => { //Get next month's meetings
+                commands.reminderFunctions.checkReminders(bot, meetings.concat(meetings2), false); //Check meeting times and send reminders
+            });
+        });
     }, 14.5*60*1000); //14.5 minutes in ms
+
+    setInterval(() => { //Print out meetings
+        let date = new Date();
+        commands.schedulingFunctions.getMeetings(date.getMonth()).then((meetings) => {
+            commands.schedulingFunctions.getMeetings(date.getMonth()+1).then((meetings2) => {
+                console.log("Meetings:");
+                commands.reminderFunctions.checkReminders(bot, meetings.concat(meetings2), true);
+            });
+        });
+    }, 60*1000); //1 minute in ms
+
     bot.user.setPresence({
         status: "online",
         activity: {
-            name: process.env.BOT_STATUS || "Loading...",
+            name: process.env.BOT_STATUS || "Do Not Disturb...",
             type: process.env.BOT_STATUS_TYPE || "PLAYING"
         }
     });
@@ -94,7 +108,7 @@ bot.on("message", (msg) => {
 //Log all messages
 bot.on("error", (e) => console.error(e));
 bot.on("warn", (e) => console.warn(e));
-bot.on("debug", (e) => console.log(e));
+//bot.on("debug", (e) => console.log(e));
 
 
 

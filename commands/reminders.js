@@ -13,19 +13,20 @@ reminders.setSpreadsheet(googleAuth.GOOGLE_SHEET_ID).then(() => reminders.setShe
  * 
  * @param {Object} bot Discord bot
  * @param {Array<Object>} nextMeetings Upcoming meetings this month
+ * @param {boolean} testRun Boolean flag if running for test (true for test)
  */
-let checkReminders = async (bot, nextMeetings) => { 
+let checkReminders = async (bot, nextMeetings, testRun) => { 
     let date = new Date();
     nextMeetings.forEach((meeting) => {
         let meetingDate = new Date(`${meeting["Year"]}-${meeting["Month"]}-${meeting["Day"]} ${meeting["Time Start"]} -8:00`); //PST timezone
         let meetingStr = `Meeting from ${meeting["Time Start"]} to ${meeting["Time End"]} and is type ${meeting["Meeting Type"]}`;
         let hours = ((meetingDate-date)/(60*60*1000));
         console.log("Checking meetings... Next meeting (" + meetingStr + ") in " + hours + " hours");
-        if (hours >= 23.75 && hours <= 24) { //23:15 to 24 hours before meeting
+        if (!testRun && hours >= 23.75 && hours <= 24) { //23:15 to 24 hours before meeting
             console.log("INFO: meeting in 24 hours. Sending out reminders");
             let reminderLevel = meeting["Meeting Type"] == "L" ? 3 : 2;
             sendReminders(bot, reminderLevel, "about 24 hours", meetingStr);
-        } else if (hours > 0.25 && hours < 0.5) { //0:15 to 0:30 hours before meeting
+        } else if (!testRun && hours > 0.25 && hours < 0.5) { //0:15 to 0:30 hours before meeting
             console.log("INFO: meeting in 15-30 minutes hours. Sending out reminders");
             let reminderLevel = meeting["Meeting Type"] == "L" ? 3 : 1;
             sendReminders(bot, reminderLevel, "about 15-30 minutes", meetingStr);
@@ -57,6 +58,7 @@ let sendReminders = async (bot, reminderLevel, msg, meetingStr) => {
         
     });
 }
+
 
 /**
  * Change the reminder level for a user
