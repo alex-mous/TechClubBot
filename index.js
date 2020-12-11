@@ -23,24 +23,26 @@ let botMode = "regular"; //The bot's current mode
  * Event handler for startup of Bot
  */
 bot.on('ready', () => {
+    let checkCounter = 0; //Half-minute counter
     setInterval(() => { //Run functions that need periodic checking
         let date = new Date();
-        commands.schedulingFunctions.getMeetings(date.getMonth()).then((meetings) => { //Get this month's meetings
-             commands.schedulingFunctions.getMeetings(date.getMonth()+1).then((meetings2) => { //Get next month's meetings
-                commands.reminderFunctions.checkReminders(bot, meetings.concat(meetings2), false); //Check meeting times and send reminders
-            });
-        });
-    }, 14.5*60*1000); //14.5 minutes in ms
+        checkCounter += 1;
+        if (checkCounter%10 == 0 || checkCounter == 29) { //Run every 5 minutes or at 14.5 minutes
+            commands.schedulingFunctions.getMeetings(date.getMonth()).then((meetings) => {
+                commands.schedulingFunctions.getMeetings(date.getMonth()+1).then((meetings2) => {
+                    if (checkCounter == 29) { //Every 14.5 minutes
+                        console.log("Checking meetings and sending reminders:");
+                        commands.reminderFunctions.checkReminders(bot, meetings.concat(meetings2), false); //Check meeting times and send reminders
+                        checkCounter = 0;
+                    } else {
+                        console.log("Meetings:");
+                        commands.reminderFunctions.checkReminders(bot, meetings.concat(meetings2), true); //Check meeting times
+                    }
 
-    setInterval(() => { //Print out meetings
-        let date = new Date();
-        commands.schedulingFunctions.getMeetings(date.getMonth()).then((meetings) => {
-            commands.schedulingFunctions.getMeetings(date.getMonth()+1).then((meetings2) => {
-                console.log("Meetings:");
-                commands.reminderFunctions.checkReminders(bot, meetings.concat(meetings2), true);
+                });
             });
-        });
-    }, 60*1000); //1 minute in ms
+        }
+    }, 30*1000); //0.5 minutes in ms
 
     bot.user.setPresence({
         status: "online",

@@ -16,8 +16,8 @@ const help = (msg) => {
             `kick @USER`\t\t\t\t\tKick the user\n\
             `deleteall`\t\t\t\t\tDelete all messages on this channel\n\
             `setminutes DATE TYPE MINUTES`\t\t\t\t\tSet the meeting minutes\n\
-            `addmeeting DAY|MONTH|YEAR|TYPE|TIME_START|TIME_END`\t\t\t\t\tSchedule a meeting\n\
-            `removemeeting DAY|MONTH|YEAR|TYPE|TIME_START`\t\t\t\t\tUn-schedule a meeting\n");
+            `addmeeting DAY|MONTH|YEAR|TYPE|TIME_START|TIME_END`\t\t\t\t\tSchedule a meeting (24-hour times!)\n\
+            `removemeeting DAY|MONTH|YEAR|TYPE|TIME_START`\t\t\t\t\tUn-schedule a meeting (24-hour times!)\n");
 }
 
 module.exports.help = {
