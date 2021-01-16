@@ -44,6 +44,7 @@ bot.on('ready', () => {
         }
     }, 30*1000); //0.5 minutes in ms
 
+    bot.user.setUsername(process.env.BOT_USERNAME || "TechClubBot");
     bot.user.setPresence({
         status: "online",
         activity: {
